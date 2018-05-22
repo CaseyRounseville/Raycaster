@@ -4,7 +4,8 @@ Player.prototype.constructor = Player;
 function Player(x, y) {
 	Actor.call(this, x, y);
 	
-	this.pos = new Vector2f(x, y);
+	this.pos = new Vector2(x, y);
+	this.vel = new Vector2(0, 0);
 	
 	this.renderer = new PlayerRenderer(this);
 	

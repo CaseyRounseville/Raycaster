@@ -5,7 +5,8 @@ const keyToBtn = {
 	40: BTN_DOWN
 };
 
-DefaultInputBackend.prototype = new InputBackend();
+//DefaultInputBackend.prototype = new InputBackend();
+DefaultInputBackend.prototype = Object.create(InputBackend.prototype);
 DefaultInputBackend.prototype.constructor = DefaultInputBackend;
 
 function DefaultInputBackend() {
@@ -23,7 +24,7 @@ DefaultInputBackend.prototype.onkeydown = function(event) {
 	
 	var btn = keyToBtn[key];
 	
-	DefaultInputBackend.prototype.press(btn);
+	inputBackend.press(btn);
 };
 
 DefaultInputBackend.prototype.onkeyup = function(event) {
@@ -34,5 +35,5 @@ DefaultInputBackend.prototype.onkeyup = function(event) {
 	
 	var btn = keyToBtn[key];
 	
-	DefaultInputBackend.prototype.release(btn);
+	inputBackend.release(btn);
 };

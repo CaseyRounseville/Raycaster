@@ -8,6 +8,5 @@ function PlayerInputHandler(player) {
 PlayerInputHandler.prototype.handleInput = function() {
 	if (inputBackend.isDown(BTN_LEFT)) {
 		this.player.pos.x -= 1;
-		alert(this.player.pos.x);
 	}
 };
