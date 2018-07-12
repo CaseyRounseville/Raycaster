@@ -33,7 +33,7 @@ export const create = (fillRect,
 	return {
 		renderers: [],
 		idToTexture: [],
-		//camera: Camera.create(),
+		camera: Camera.create(),
 		
 		registerRenderer,
 		unregisterRenderer,
