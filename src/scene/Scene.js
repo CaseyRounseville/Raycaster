@@ -1,7 +1,3 @@
-const create = (obj) => {
+export const create = (obj) => {
 	
-};
-
-export default {
-	create
 };

@@ -1,8 +1,8 @@
-const SIZE = 32;
+export const SIZE = 32;
 
-const CLEAR = 0;
+export const CLEAR = 0;
 
-const create = (north, south, west, east, flat, height, arg1, arg2, arg3, arg4) => {
+export const create = (north, south, west, east, flat, height, arg1, arg2, arg3, arg4) => {
 	return {
 		north,
 		south,
@@ -17,19 +17,10 @@ const create = (north, south, west, east, flat, height, arg1, arg2, arg3, arg4) 
 	};
 };
 
-const pixelsToBlocks = (pixels) => {
+export const pixelsToBlocks = (pixels) => {
 	return pixels / SIZE;
 };
 
-const blocksToPixels = (blocks) => {
+export const blocksToPixels = (blocks) => {
 	return blocks * SIZE;
-};
-
-export default {
-	SIZE,
-	CLEAR,
-  
-	create,
-	pixelsToBlocks,
-	blocksToPixels
 };

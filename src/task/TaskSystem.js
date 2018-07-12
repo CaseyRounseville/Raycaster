@@ -1,24 +1,19 @@
-import ArrayUtil from "../util/ArrayUtil";
+import * as ArrayUtil from "../util/ArrayUtil";
 
 tasks = [];
 
-const registerTask = (task) => {
+export const registerTask = (task) => {
   
 };
 
-const unregisterTask = (task) => {
+export const unregisterTask = (task) => {
   
 };
 
-const tick = () => {
+export const tick = () => {
   for (int i = 0; i < tasks.length; i++) {
     if (tasks[i].tick()) {
       
     }
   }
-};
-
-export default {
-  registerTask,
-  unregisterTask
 };

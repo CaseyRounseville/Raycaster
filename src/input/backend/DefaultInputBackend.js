@@ -1,4 +1,4 @@
-import InputBackend from "./InputBackend";
+import * as InputBackend from "./InputBackend";
 
 const keyToBtn = {
 	37: InputBackend.BTN_LEFT,
@@ -7,8 +7,8 @@ const keyToBtn = {
 	40: InputBackend.BTN_DOWN
 };
 
-const create = () => {
-	let defaultInputBackend = InputBackend.create();
+export const create = () => {
+	let self = InputBackend.create();
 	
 	document.onkeydown = (event) => {
 		let key = event.keyCode;
@@ -18,7 +18,7 @@ const create = () => {
 		
 		let btn = keyToBtn[key];
 		
-		defaultInputBackend.press(defaultInputBackend, btn);
+		InputBackend.press(self, btn);
 	};
 	
 	document.onkeyup = (event) => {
@@ -29,12 +29,8 @@ const create = () => {
 		
 		let btn = keyToBtn[key];
 		
-		defaultInputBackend.release(defaultInputBackend, btn);
+		InputBackend.release(self, btn);
 	};
 	
-	return defaultInputBackend;
-};
-
-export default {
-	create
+	return self;
 };

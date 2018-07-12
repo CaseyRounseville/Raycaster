@@ -1,13 +1,13 @@
-import GraphicsBackend from "../graphics/backend/GraphicsBackend";
-import Canvas2DGraphicsBackend from "../graphics/backend/Canvas2DGraphicsBackend";
+import * as GraphicsBackend from "../graphics/backend/GraphicsBackend";
+import * as Canvas2DGraphicsBackend from "../graphics/backend/Canvas2DGraphicsBackend";
 
-import InputBackend from "../input/backend/InputBackend";
-import DefaultInputBackend from "../input/backend/DefaultInputBackend";
+import * as InputBackend from "../input/backend/InputBackend";
+import * as DefaultInputBackend from "../input/backend/DefaultInputBackend";
 
-import PhysicsBackend from "../physics/backend/PhysicsBackend";
-import DefaultPhysicsBackend from "../physics/backend/DefaultPhysicsBackend";
+import * as PhysicsBackend from "../physics/backend/PhysicsBackend";
+import * as DefaultPhysicsBackend from "../physics/backend/DefaultPhysicsBackend";
 
-const create = (config) => {
+export const create = (config) => {
 	let globalCtxt = {};
 	
 	// graphics
@@ -38,8 +38,4 @@ const create = (config) => {
 	}
 	
 	return globalCtxt;
-};
-
-export default {
-	create
 };

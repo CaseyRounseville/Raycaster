@@ -1,7 +1,7 @@
-const PLAYBACK_LOOP   = 0,
-      PLAYBACK_FREEZE = 1;
+export const PLAYBACK_LOOP   = 0,
+             PLAYBACK_FREEZE = 1;
 
-const create = (anims) => {
+export const create = (anims) => {
   return {
     playbackType: PLAYBACK_LOOP,
     currFrame: 0,
@@ -9,25 +9,18 @@ const create = (anims) => {
   };
 };
 
-const setCurrAnim = (animNum) => {
+export const setCurrAnim = (self, animNum) => {
   
 };
 
-const setPlaybackType = (type) => {
+export const setPlaybackType = (self, type) => {
   
 };
 
-const registerCallback(cb) => {
+export const registerCallback(self, cb) => {
   
 };
 
-const unregisterCallback(cb) => {
+export const unregisterCallback(self, cb) => {
   
-};
-
-export default {
-  create,
-  setCurrAnim,
-  setPlaybackType,
-  registerCallback
 };

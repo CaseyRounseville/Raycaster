@@ -1,4 +1,4 @@
-const create = (pos, vel, hitBox) => {
+export const create = (pos, vel, hitBox) => {
 	return {
 		pos,
 		vel,
@@ -7,14 +7,10 @@ const create = (pos, vel, hitBox) => {
 	};
 }
 
-const registerListener = (self, l) => {
+export const registerListener = (self, l) => {
   
 };
 
-const unregisterListener = (self, l) => {
+export const unregisterListener = (self, l) => {
   
-};
-
-export default {
-	create
 };

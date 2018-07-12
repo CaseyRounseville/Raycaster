@@ -1,17 +1,11 @@
-const wrapFull = (ang) => {
+export const wrapFull = (ang) => {
 	return ang % (2 * Math.PI);
 };
 
-const wrapHalf = (ang) => {
+export const wrapHalf = (ang) => {
 	return ang % Math.PI;
 };
 
-const wrapQuarter = (ang) => {
+export const wrapQuarter = (ang) => {
 	return ang % (Math.PI / 2);
-};
-
-export default {
-	wrapFull,
-	wrapHalf,
-	wrapQuarter
 };

@@ -1,13 +1,13 @@
-//import Camera from "../Camera";
+import * as Camera from "../Camera";
 
 export const INTERNAL_WIDTH = 320;
 export const INTERNAL_HEIGHT = 240;
 
-const registerRenderer = (self, renderer) => {
+export const registerRenderer = (self, renderer) => {
 	self.renderers.push(renderer);
 };
 
-const unregisterRenderer = (self, renderer) => {
+export const unregisterRenderer = (self, renderer) => {
 	self.renderers.remove(renderer);
 };
 
@@ -19,17 +19,17 @@ const render = (self) => {
 	}
 };
 
-const create = (fillRect,
-				clearScreen,
-				renderTexture,
-				loadTexture,
-				getTexture,
-				destroyTexture,
-				getFillColor,
-				setFillColor,
-				setTextColor,
-				renderText,
-				destroy) => {
+export const create = (fillRect,
+                       clearScreen,
+                       renderTexture,
+                       loadTexture,
+                       getTexture,
+                       destroyTexture,
+                       getFillColor,
+                       setFillColor,
+                       setTextColor,
+                       renderText,
+                       destroy) => {
 	return {
 		renderers: [],
 		idToTexture: [],
@@ -51,11 +51,4 @@ const create = (fillRect,
 		renderText,
 		destroy
 	};
-};
-
-export default {
-	INTERNAL_WIDTH,
-	INTERNAL_HEIGHT,
-	
-	create
 };

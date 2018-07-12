@@ -1,11 +1,11 @@
-import Renderer from "../../graphics/Renderer";
-import Camera from "../../graphics/Camera";
+import * as Renderer from "../../graphics/Renderer";
+import * as Camera from "../../graphics/Camera";
 
-import Angle from "../Angle";
+import * as Angle from "../Angle";
 
-import GraphicsBackend from "../../graphics/backend/GraphicsBackend";
+import * as GraphicsBackend from "../../graphics/backend/GraphicsBackend";
 
-import Block from "./Block";
+import * as Block from "./Block";
 
 const wallCast = (self, backend, strip) => {
 	let camera = backend.camera;

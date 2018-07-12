@@ -1,5 +1,4 @@
-import BlockSetLoaderStrat from "./BlockSetLoaderStrat";
-import BlockSetLoaderStrat0 from "./BlockSetLoaderStrat0";
+import * as BlockSetLoaderStrat0 from "./BlockSetLoaderStrat0";
 
 const strats = [
   BlockSetLoaderStrat0.loadBlockSet

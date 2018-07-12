@@ -1,29 +1,9 @@
-const create = () => {
-	return {
-		strats = [];
-	};
-};
+import * as BlockMapLoaderStrat0 from "./BlockMapLoaderStrat0";
 
-const registerStrat = (self, ver, strat) => {
-	self.strats[ver] = strat;
-};
+const strats = [
+  BlockMapLoaderStrat0.loadBlockMap
+];
 
-const unregisterStrat = (self, ver) => {
-	delete self.strats[ver];
-};
-
-const loadBlockMap = (self, buf) => {
-	let ver = 0;
-	
-	// read ver from buf
-	// ...
-	
-	return self.strats[ver].loadBlockMap(buf);
-};
-
-export default {
-	create,
-	registerStrat,
-	unregisterStrat,
-	loadBlockMap
+export const loadBlockMap = (self, obj) => {
+	return strats[obj.version].loadBlockMap(obj);
 };

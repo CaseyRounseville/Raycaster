@@ -1,6 +1,6 @@
-import BlockSet from "./BlockSet";
+import * as BlockSet from "./BlockSet";
 
-const loadBlockSet = (obj) => {
+export const loadBlockSet = (obj) => {
   /*
   format: JSON {
     version: <number>,
@@ -25,7 +25,3 @@ const loadBlockSet = (obj) => {
   */
   return BlockSet.create(obj.blocks);
 };
-
-export default {
-  loadBlockSet
-}

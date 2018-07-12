@@ -1,7 +1,3 @@
-const create = (configStr) => {
+export const create = (configStr) => {
 	return JSON.parse(configStr);
-};
-
-export default {
-	create
 };

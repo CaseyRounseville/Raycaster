@@ -1,16 +1,12 @@
-import GraphicsBackend from "./backend/GraphicsBackend";
-import Renderer from "./Renderer";
+import * as GraphicsBackend from "./backend/GraphicsBackend";
+import * as Renderer from "./Renderer";
 
 const render = (self, backend) => {
 	graphicsBackend.fillRect(0, 0, 10, 10, 0xFF00FFFF);
 };
 
-const create = () => {
+export const create = () => {
 	let testRenderer = Renderer.create(render);
 	
 	return testRenderer;
-};
-
-export default {
-	create
 };

@@ -1,22 +1,14 @@
-const registerBody = (self, body) => {
+export const registerBody = (self, body) => {
 	self.bodies.push(body);
 };
 
-const unregisterBody = (self, body) => {
+export const unregisterBody = (self, body) => {
 	self.bodies.remove(body);
 };
 
-const create = (process) => {
+export const create = (process) => {
 	return {
 		bodies: [],
-		
-		registerBody,
-		unregisterBody,
-		
 		process
 	};
-};
-
-export default {
-	create
 };

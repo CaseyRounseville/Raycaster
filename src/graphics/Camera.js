@@ -1,33 +1,35 @@
-import Vector1 from "../physics/Vector1";
-import Vector2 from "../physics/Vector2";
+import * as Vector1 from "../physics/Vector1";
+import * as Vector2 from "../physics/Vector2";
 
-import Angle from "../physics/Angle";
+import * as GraphicsBackend from "./backend/GraphicsBackend";
 
-import Block from "../physics/block/Block";
+import * as Angle from "../physics/Angle";
 
-const VISIBILITY	= 50,
-      FOV			= Math.PI / 2,
-      DIST_TO_PLANE	= Block.pixelsToBlocks(320 / 2) / Math.sin(FOV / 2);
+import * as Block from "../physics/block/Block";
 
-const bindPos = (self, pos) => {
+export const VISIBILITY	    = 50,
+             FOV			      = Math.PI / 2,
+             DIST_TO_PLANE	= Block.pixelsToBlocks(GraphicsBackend.INTERNAL_WIDTH / 2) / Math.sin(FOV / 2);
+
+export const bindPos = (self, pos) => {
 	self.pos = pos;
 };
 
-const bindRot = (self, rot) => {
+export const bindRot = (self, rot) => {
 	self.rot = rot;
 };
 
-const bindHeight = (self, height) => {
+export const bindHeight = (self, height) => {
 	self.height = height;
 };
 
-const calcRayAng = (self, strip) => {
-	let x = Block.pixelsToBlocks(strip - 320 / 2);
+export const calcRayAng = (self, strip) => {
+	let x = Block.pixelsToBlocks(strip - GraphicsBackend.INTERNAL_WIDTH / 2);
 	let ang = Angle.wrapFull(Math.atan2(DIST_TO_PLANE, x));
 	return Angle.wrapFull(ang + self.rot.v);
 };
 
-const create = () => {
+export const create = () => {
 	return {
 		pos: Vector2.create(0, 0),
 		rot: Vector1.create(0),
@@ -39,12 +41,4 @@ const create = () => {
 		bindRot,
 		calcRayAng
 	};
-};
-
-export default {
-	VISIBILITY,
-	FOV,
-	DIST_TO_PLANE,
-	
-	create
 };

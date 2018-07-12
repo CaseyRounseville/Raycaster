@@ -1,9 +1,5 @@
-const create = (handleInput) => {
+export const create = (handleInput) => {
 	return {
 		handleInput
 	};
-};
-
-export default {
-	create
 };

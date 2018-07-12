@@ -1,4 +1,4 @@
-const create = (texture, width, height) => {
+export const create = (texture, width, height) => {
 	return {
 		texture,
 		width,

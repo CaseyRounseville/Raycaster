@@ -1,8 +1,4 @@
-const create = () => {
-	
-};
-
-const loadBlockMap = (obj) => {
+export const loadBlockMap = (obj) => {
 	/*
 	format: JSON
 	{
@@ -12,7 +8,3 @@ const loadBlockMap = (obj) => {
 	}
 	*/
 };
-
-export default {
-	create
-}:

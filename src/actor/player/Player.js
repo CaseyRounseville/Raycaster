@@ -1,11 +1,15 @@
-import PlayerRenderer from "./PlayerRenderer";
-import PlayerInputHandler from "./PlayerInputHandler";
+import * as PlayerRenderer from "./PlayerRenderer";
+import * as PlayerInputHandler from "./PlayerInputHandler";
 
-import Actor from "../Actor";
+import * as InputBackend from "../../input/backend/InputBackend";
 
-import Vector2 from "../../physics/Vector2";
+import * as GraphicsBackend from "../../graphics/backend/GraphicsBackend";
 
-import GlobalContext from "../../main/GlobalContext";
+import * as Actor from "../Actor";
+
+import * as Vector2 from "../../physics/Vector2";
+
+import * as GlobalContext from "../../main/GlobalContext";
 import { globalCtxt } from "../../main/Main";
 
 const wire = (self) => {
@@ -14,10 +18,10 @@ const wire = (self) => {
 	//let globalCtxt = Main.globalCtxt;
 	
 	let graphicsBackend = globalCtxt.graphicsBackend;
-	graphicsBackend.registerRenderer(graphicsBackend, self.renderer);
+	GraphicsBackend.registerRenderer(graphicsBackend, self.renderer);
 	
 	let inputBackend = globalCtxt.inputBackend;
-	inputBackend.registerInputHandler(inputBackend, self.inputHandler);
+	InputBackend.registerInputHandler(inputBackend, self.inputHandler);
 };
 
 const unwire = (self) => {
@@ -26,13 +30,13 @@ const unwire = (self) => {
 	//let globalCtxt = Main.globalCtxt;
 	
 	let graphicsBackend = globalCtxt.graphicsBackend;
-	graphicsBackend.unregisterRenderer(graphicsBackend, self.renderer);
+	GraphicsBackend.unregisterRenderer(graphicsBackend, self.renderer);
 	
 	let inputBackend = globalCtxt.inputBackend;
-	inputBackend.unregisterInputHandler(inputBackend, self.inputHandler);
+	InputBackend.unregisterInputHandler(inputBackend, self.inputHandler);
 };
 
-const create = (x, y) => {
+export const create = (x, y) => {
 	let player = Actor.create(wire, unwire);
 	
 	player.pos = Vector2.create(x, y);
@@ -51,7 +55,3 @@ const create = (protoActor) => {
 	could return null/undef, so no need for separate creator class
 };
 */
-
-export const Player = {
-	create
-};

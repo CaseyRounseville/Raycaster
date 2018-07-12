@@ -1,12 +1,8 @@
 /*
 blocks: array of Block
 */
-const create = (blocks) {
+export const create = (blocks) {
 	return {
 		blocks
 	};
-};
-
-export default {
-	create
 };

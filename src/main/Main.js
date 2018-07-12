@@ -1,9 +1,11 @@
-import GlobalContextConfig from "./GlobalContextConfig";
-import GlobalContext from "./GlobalContext";
+import * as GlobalContextConfig from "./GlobalContextConfig";
+import * as GlobalContext from "./GlobalContext";
 
-import TestInputHandler from "../input/TestInputHandler";
+import * as TestInputHandler from "../input/TestInputHandler";
 
-import { Player } from "../actor/player/Player";
+import * as InputBackend from "../input/backend/InputBackend";
+
+import * as Player from "../actor/player/Player";
 
 // set up global ctxt
 const globalCtxtStr = `{
@@ -20,17 +22,18 @@ const inputBackend = globalCtxt.inputBackend;
 const physicsBackend = globalCtxt.physicsBackend;
 
 const testInputHandler = TestInputHandler.create();
-inputBackend.registerInputHandler(inputBackend, testInputHandler);
+InputBackend.registerInputHandler(inputBackend, testInputHandler);
 
 const player = Player.create(20, 20);
 player.wire(player);
 
-// start game loop
-setInterval(loop, 1000.0 / 60.0);
-function loop() {
-	inputBackend.process(inputBackend);
+const loop = () => {
+	InputBackend.process(inputBackend);
 	graphicsBackend.render(graphicsBackend);
 };
+
+// start game loop
+setInterval(loop, 1000.0 / 60.0);
 
 /*export {
 	globalCtxt

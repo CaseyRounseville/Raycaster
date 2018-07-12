@@ -1,9 +1,5 @@
-const create = (render) => {
+export const create = (render) => {
 	return {
 		render
 	};
-};
-
-export default {
-	create
 };

@@ -1,11 +1,7 @@
-import AnimationLoaderStrat0 from "./AnimationLoaderStrat0";
+import * as AnimationLoaderStrat0 from "./AnimationLoaderStrat0";
 
 const strats = [ AnimationLoaderStrat0.loadAnimation ];
 
-const loadAnimation = (self, obj) => {
+export const loadAnimation = (self, obj) => {
   return strats[obj.version](obj);
-};
-
-export default {
-  loadAnimation
 };

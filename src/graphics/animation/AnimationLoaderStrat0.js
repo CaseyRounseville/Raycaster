@@ -1,9 +1,5 @@
-import Animation from "./Animation";
+import * as Animation from "./Animation";
 
-const loadAnimation = (obj) => {
+export const loadAnimation = (obj) => {
   
-};
-
-export default {
-  loadAnimation
 };

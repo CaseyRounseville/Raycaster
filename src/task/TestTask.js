@@ -1,4 +1,4 @@
-import Task from "./Task";
+import * as Task from "./Task";
 
 const tick = (self) => {
   self.counter++;
@@ -8,15 +8,10 @@ const tick = (self) => {
   }
 };
 
-const create = () => {
-  let self = Task.create();
+export const create = () => {
+  let self = Task.create(tick);
   
   self.counter = 0;
-  self.tick = tick;
   
   return self;
-};
-
-export default {
-  create
 };

@@ -1,8 +1,8 @@
-import GraphicsBackend from "./GraphicsBackend";
+import * as GraphicsBackend from "./GraphicsBackend";
 
-import Color from "../util/Color.js";
+import * as Color from "../util/Color.js";
 
-import Keeper from "../../util/Keeper";
+import * as Keeper from "../../util/Keeper";
 
 const MAX_IMAGES = 64;
 
@@ -112,7 +112,7 @@ const destroy = (self) => {
 	//window.removeEventListener("resize", self.resize);
 }
 
-const create = () => {
+export const create = () => {
 	let canvas2DGraphicsBackend = GraphicsBackend.create(fillRect,
 														 clearScreen,
 														 renderTexture,
@@ -141,9 +141,4 @@ const create = () => {
 	//window.addEventListener("resize", resize);
 	
 	return canvas2DGraphicsBackend;
-};
-
-export default {
-	create,
-	destroy
 };
