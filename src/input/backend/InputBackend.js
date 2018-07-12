@@ -1,57 +1,76 @@
-const BTN_UP	= 0;
-const BTN_DOWN	= 1;
-const BTN_LEFT	= 2;
-const BTN_RIGHT	= 3;
+const BTN_UP	= 0,
+      BTN_DOWN	= 1,
+      BTN_LEFT	= 2,
+      BTN_RIGHT	= 3;
 
-function InputBackend() {
-	this.currFrame = 0;
-	this.prevFrame = 0;
-	
-	this.inputHandlers = [];
-}
-
-InputBackend.prototype.registerInputHandler = function(inputHandler) {
-	this.inputHandlers.push(inputHandler);
+const registerInputHandler = (self, inputHandler) => {
+	self.inputHandlers.push(inputHandler);
 };
 
-InputBackend.prototype.unregisterInputHandler = function(inputHandler) {
-	this.inputHandlers.remove(inputHandler);
+const unregisterInputHandler = (self, inputHandler) => {
+	self.inputHandlers.remove(inputHandler);
 };
 
-InputBackend.prototype.isDown = function(btn) {
+const isDown = (self, btn) => {
 	if (btn < 0 || btn > 3) {
 		return false;
 	}
-	return ((this.currFrame >> btn) & 1) == 1;
+	return ((self.currFrame >> btn) & 1) == 1;
 };
 
-InputBackend.prototype.wasDown = function(btn) {
+const wasDown = (self, btn) => {
 	if (btn < 0 || btn > 3) {
 		return false;
 	}
-	return ((this.prevFrame >> btn) & 1) == 1;
+	return ((self.prevFrame >> btn) & 1) == 1;
 };
 
-InputBackend.prototype.processInput = function() {
+const process = (self) => {
 	// process current frame of input
-	for (var i = 0; i < this.inputHandlers.length; i++) {
-		this.inputHandlers[i].handleInput();
+	for (var i = 0; i < self.inputHandlers.length; i++) {
+		let inputHandler = self.inputHandlers[i];
+		inputHandler.handleInput(inputHandler, self);
 	}
 	
 	// set previous to current
-	this.prevFrame = this.currFrame;
+	self.prevFrame = self.currFrame;
 };
 
-InputBackend.prototype.press = function(btn) {
+const press = (self, btn) => {
 	if (btn < 0 || btn > 3) {
 		return;
 	}
-	this.currFrame |= 1 << btn;
+	self.currFrame |= 1 << btn;
 };
 
-InputBackend.prototype.release = function(btn) {
+const release = (self, btn) => {
 	if (btn < 0 || btn > 3) {
 		return;
 	}
-	this.currFrame &= ~(1 << btn);
+	self.currFrame &= ~(1 << btn);
+};
+
+const create = () => {
+	return {
+		currFrame: 0,
+		prevFrame: 0,
+		inputHandlers: [],
+		
+		press,
+		release,
+		isDown,
+		wasDown,
+		registerInputHandler,
+		unregisterInputHandler,
+		process
+	};
+};
+
+export default {
+	BTN_UP,
+	BTN_DOWN,
+	BTN_LEFT,
+	BTN_RIGHT,
+	
+	create
 };

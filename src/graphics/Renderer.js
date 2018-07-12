@@ -1,9 +1,9 @@
-/*
-function render(GraphicsBackend backend);
-*/
-
-function Renderer() {
-	this.render = function() {
-		// empty
+const create = (render) => {
+	return {
+		render
 	};
-}
+};
+
+export default {
+	create
+};

@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../style.css">
+    </head>
+    <body class="page">
+        <a class="link" href="../Contents.html">Contents</a>
+        
+		<h1 class="title">Actors</h1>
+        <p>Any in-game object.</p>
+        
+        <h2 class="title">Structures</h2>
+        
+        <h3 class="title">Actor</h3>
+        
+<pre><code>Actor: {
+    wire,
+    unwire
+}</code></pre>
+
+        <table>
+            <tr>
+                <td><code>wire</code></td>
+                <td><code>function(self)</code></td>
+                <td>called to wire up the actor's components</td>
+            </tr>
+            <tr>
+                <td><code>unwire</code></td>
+                <td><code>function(self)</code></td>
+                <td>called to wire up the actor's components</td>
+            </tr>
+        </table>
+
+        <h3 class="title">ProtoActor</h3>
+        
+<pre><code>ProtoActor: {
+    type,
+    x,
+    y,
+    arg
+}</code></pre>
+
+        <table>
+            <tr>
+                <td><code>type</code></td>
+                <td><code>string</code></td>
+                <td>used by actor factory to determine which creation function to call</td>
+            </tr>
+            <tr>
+                <td><code>x</code></td>
+                <td><code>number</code></td>
+                <td>x position</td>
+            </tr>
+            <tr>
+                <td><code>y</code></td>
+                <td><code>number</code></td>
+                <td>y position</td>
+            </tr>
+            <tr>
+                <td><code>arg</code></td>
+                <td><code>object</code></td>
+                <td>initialization arg for actor<br />structure varies with type of actor</td>
+            </tr>
+        </table>
+
+        <h2 class="title">Functions</h2>
+        
+        <table>
+            <tr>
+                <td><code>create</code></td>
+                <td><code>function(protoActor)</code></td>
+                <td>creates an actor based on protoActor<br />could return undefined<br />not virtual function, but must be implemented and exported by all types of actor</td>
+            </tr>
+        </table>
+    
+        <h2 class="title">Types of Actors</h2>
+		<ul>
+			<li><a class="link" href="./player/Player.html">Player</a></li>
+		</ul>
+	</body>
+</html>

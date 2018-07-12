@@ -1,12 +1,18 @@
-TestInputHandler.prototype = Object.create(InputHandler.prototype);
-TestInputHandler.prototype.constructor = TestInputHandler;
+import InputHandler from "./InputHandler";
+import InputBackend from "./backend/InputBackend";
 
-function TestInputHandler() {
-	InputHandler.call(this);
-}
-
-TestInputHandler.prototype.handleInput = function() {
-	if (inputBackend.isDown(BTN_DOWN)) {
-		alert("BTN_DOWN JUST PRESSED");
+const handleInput = (self, backend) => {
+	if (backend.isDown(backend, InputBackend.BTN_DOWN)) {
+		console.log("BTN_DOWN JUST PRESSED");
 	}
+};
+
+const create = () => {
+	let testInputHandler = InputHandler.create(handleInput);
+	
+	return testInputHandler;
+};
+
+export default {
+	create
 };

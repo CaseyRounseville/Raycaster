@@ -1,24 +1,38 @@
-function HitBox(pos, size) {
-	this.pos = pos;
-	this.size = size;
-}
-
-HitBox.prototype.top = function() {
-	return this.pos.y - this.size.y / 2;
+const create = (pos, size) => {
+	return {
+		pos,
+		size
+	};
 };
 
-HitBox.prototype.bottom = function() {
-	return this.pos.y + this.size.y / 2;
+const top = (self) => {
+	return self.pos.y - self.size.y / 2;
 };
 
-HitBox.prototype.left = function() {
-	return this.pos.x - this.size.x / 2;
+const bottom = (self) => {
+	return self.pos.y + self.size.y / 2;
 };
 
-HitBox.prototype.right = function() {
-	return this.pos.x + this.size.x / 2;
+const left = (self) => {
+	return self.pos.x - self.size.x / 2;
 };
 
-HitBox.prototype.intersects = function(other) {
-	return this.left() < other.right() && this.right() > other.left() && this.top() < other.bottom() && this.bottom() > other.top();
+const right = (self) => {
+	return self.pos.x + self.size.x / 2;
+};
+
+const intersects = (self, other) => {
+	return self.left()  <	other.right()	 &&
+         self.right()	>	other.left()	 &&
+         self.top()		<	other.bottom() &&
+         self.bottom	>	other.top();
+};
+
+export default {
+	create,
+	top,
+	bottom,
+	left,
+	right,
+	intersects
 };

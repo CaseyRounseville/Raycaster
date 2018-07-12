@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../style.css">
+    </head>
+    <body class="page">
+        <a class="link" href="../Contents.html">Contents</a>
+        
+		<h1 class="title">Triggers</h1>
+        <p>Cause stuff to happen indirectly, and also use for inter-actor communication and persistence of game state.<br />
+        Triggers 0x00 - 0x08 are cleared on a room change, and should be used only for local puzzles.<br />
+        Triggers 0x09 - 0x7F are changed on a scene change, and should be used for scene-level puzzles and persistence.<br />
+        Triggers 0x80 - 0xFF are persistent across room and scene changes, and should be used for game-level puzzles and persistence.</p>
+        
+        <h2 class="title">Structures</h2>
+        
+        <h3 class="title">TriggerListener</h3>
+        
+<pre><code>TriggerListener: {
+    triggerSet,
+    triggerCleared,
+    triggerTouched
+}</code></pre>
+
+        <table>
+            <tr>
+                <td><code>triggerSet</code></td>
+                <td><code>function(self)</code></td>
+                <td>reacts to a trigger being set</td>
+            </tr>
+            <tr>
+                <td><code>triggerCleared</code></td>
+                <td><code>function(self)</code></td>
+                <td>reacts to a trigger being cleared</td>
+            </tr>
+            <tr>
+                <td><code>triggerTouched</code></td>
+                <td><code>function(self)</code></td>
+                <td>reacts to a trigger being touched</td>
+            </tr>
+        </table>
+        
+        <h2 class="title">Functions in TriggerSystem module</h2>
+        
+        <table>
+            <tr>
+                <td><code>registerTriggerListener</code></td>
+                <td><code>function(trigger, triggerListener)</code></td>
+                <td>registers a trigger listener</td>
+            </tr>
+            <tr>
+                <td><code>unregisterTriggerListener</code></td>
+                <td><code>function(trigger, triggerListener)</code></td>
+                <td>unregisters a trigger listener</td>
+            </tr>
+            <tr>
+                <td><code>setTrigger</code></td>
+                <td><code>function(trigger)</code></td>
+                <td>sets a trigger(sets it to 1)</td>
+            </tr>
+            <tr>
+                <td><code>clearTrigger</code></td>
+                <td><code>function(trigger)</code></td>
+                <td>clears a trigger(sets it to 0)</td>
+            </tr>
+            <tr>
+                <td><code>touchTrigger</code></td>
+                <td><code>function(trigger)</code></td>
+                <td>touches a trigger(doesn't change the value, but it calls the listeners)</td>
+            </tr>
+        </table>
+	</body>
+</html>

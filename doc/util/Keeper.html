@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../style.css">
+    </head>
+    <body class="page">
+        <a class="link" href="../Contents.html">Contents</a>
+        
+		<h1 class="title">Keeper</h1>
+        <p>Hold items and returns a handle upon adding one.<br />
+        Keepers are fixed sized containers that allow their items to be accessed with a handle, which is just an integer.</p>
+        
+        <h2 class="title">Structures</h2>
+        
+        <h3 class="title">Keeper</h3>
+        
+<pre><code>Keeper: {
+    max,
+    objs
+}</code></pre>
+
+        <table>
+            <tr>
+                <td><code>max</code></td>
+                <td><code>number</code></td>
+                <td>the max value of a handle<br />
+                handles start at zero and are reused<br />
+                keepers are fixed size containers</td>
+            </tr>
+            <tr>
+                <td><code>objs</code></td>
+                <td><code>[]</code></td>
+                <td>holds the objects</td>
+            </tr>
+        </table>
+        
+        <h3 class="title">Functions</h3>
+        
+        <table>
+            <tr>
+                <td><code>create</code></td>
+                <td><code>function(max)</code></td>
+                <td>creates a keeper with the max value specified</td>
+            </tr>
+            <tr>
+                <td><code>add</code></td>
+                <td><code>function(self, obj)</code></td>
+                <td>add an object to the keeper<br />
+                returns a handle for the object</td>
+            </tr>
+            <tr>
+                <td><code>remove</code></td>
+                <td><code>function(self, handle)</code></td>
+                <td>removes the object associated with the specified handle<br />
+                returns the removed object</td>
+            </tr>
+        </table>
+	</body>
+</html>

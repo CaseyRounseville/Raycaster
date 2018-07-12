@@ -1,15 +1,22 @@
-function PhysicsBackend() {
-	this.bodies = [];
-}
-
-PhysicsBackend.prototype.processPhysics = function() {
-	// empty
+const registerBody = (self, body) => {
+	self.bodies.push(body);
 };
 
-PhysicsBackend.prototype.registerBody = function(body) {
-	this.bodies.push(body);
+const unregisterBody = (self, body) => {
+	self.bodies.remove(body);
 };
 
-PhysicsBackend.prototype.unregisterBody = function(body) {
-	this.bodies.remove(body);
+const create = (process) => {
+	return {
+		bodies: [],
+		
+		registerBody,
+		unregisterBody,
+		
+		process
+	};
+};
+
+export default {
+	create
 };

@@ -1,39 +1,40 @@
+import InputBackend from "./InputBackend";
+
 const keyToBtn = {
-	37: BTN_LEFT,
-	38: BTN_UP,
-	39: BTN_RIGHT,
-	40: BTN_DOWN
+	37: InputBackend.BTN_LEFT,
+	38: InputBackend.BTN_UP,
+	39: InputBackend.BTN_RIGHT,
+	40: InputBackend.BTN_DOWN
 };
 
-//DefaultInputBackend.prototype = new InputBackend();
-DefaultInputBackend.prototype = Object.create(InputBackend.prototype);
-DefaultInputBackend.prototype.constructor = DefaultInputBackend;
-
-function DefaultInputBackend() {
-	InputBackend.call(this);
+const create = () => {
+	let defaultInputBackend = InputBackend.create();
 	
-	document.onkeydown = this.onkeydown;
-	document.onkeyup = this.onkeyup;
-}
-
-DefaultInputBackend.prototype.onkeydown = function(event) {
-	var key = event.keyCode;
-	if (keyToBtn[key] == undefined) {
-		return;
-	}
+	document.onkeydown = (event) => {
+		let key = event.keyCode;
+		if (keyToBtn[key] == undefined) {
+			return;
+		}
+		
+		let btn = keyToBtn[key];
+		
+		defaultInputBackend.press(defaultInputBackend, btn);
+	};
 	
-	var btn = keyToBtn[key];
+	document.onkeyup = (event) => {
+		let key = event.keyCode;
+		if (keyToBtn[key] == undefined) {
+			return;
+		}
+		
+		let btn = keyToBtn[key];
+		
+		defaultInputBackend.release(defaultInputBackend, btn);
+	};
 	
-	inputBackend.press(btn);
+	return defaultInputBackend;
 };
 
-DefaultInputBackend.prototype.onkeyup = function(event) {
-	var key = event.keyCode;
-	if (keyToBtn[key] == undefined) {
-		return;
-	}
-	
-	var btn = keyToBtn[key];
-	
-	inputBackend.release(btn);
+export default {
+	create
 };

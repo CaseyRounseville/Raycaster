@@ -1,0 +1,32 @@
+.title {
+	color: #00FF00;
+	background-color: #3F3F3F;
+}
+
+.link {
+	color: #00FF00;
+	background-color: #000000;
+}
+
+.link:hover {
+	color: #7F7F7F;
+	background-color: #00FF00;
+}
+
+.page {
+	background-color: #000000;
+	color: #FFFFFF;
+}
+
+table, th, td {
+    border: 1px solid white;
+	border-collapse: collapse;
+}
+
+th, td {
+    padding: 15px;
+}
+
+code {
+	color: #00FF00;
+}

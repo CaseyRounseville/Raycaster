@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../style.css">
+    </head>
+    <body class="page">
+        <a class="link" href="../Contents.html">Contents</a>
+        
+		<h1 class="title">ArrayUtil</h1>
+        <p>Array utility functions for convenience.</p>
+        
+        <h3 class="title">Functions</h3>
+        
+        <table>
+            <tr>
+                <td><code>add</code></td>
+                <td><code>function(arr, i, val)</code></td>
+                <td>adds val to arr at index i</td>
+            </tr>
+            <tr>
+                <td><code>remove</code></td>
+                <td><code>function(arr, val)</code></td>
+                <td>removes val from arr</td>
+            </tr>
+            <tr>
+                <td><code>setRangeConst</code></td>
+                <td><code>function(arr, start, end, val)</code></td>
+                <td>sets arr[start] to arr[end - 1] to val</td>
+            </tr>
+            <tr>
+                <td><code>setRangeFn</code></td>
+                <td><code>function(arr, start, end, fn)</code></td>
+                <td>sets arr[start] to arr[end - 1] to the return value of fn(i),<br />
+                where i is a counter in a loop from start to end - 1,<br />
+                and fn is called each iteration</td>
+            </tr>
+        </table>
+	</body>
+</html>

@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../style.css">
+    </head>
+    <body class="page">
+        <a class="link" href="../Contents.html">Contents</a>
+        
+		<h1 class="title">Tasks</h1>
+        <p>Hold items and returns a handle upon adding one.<br />
+        Keepers are fixed sized containers that allow their items to be accessed with a handle, which is just an integer.</p>
+        
+        <h2 class="title">Structures</h2>
+        
+        <h3 class="title">Task</h3>
+        
+<pre><code>Task: {
+    cbs,
+    tick
+}</code></pre>
+
+        <table>
+            <tr>
+                <td><code>cbs</code></td>
+                <td><code>[]</code></td>
+                <td>task completion callbacks<br />
+                callbacks are called once, in the order they were registered, with zero arguments, upon task completion</td>
+            </tr>
+            <tr>
+                <td><code>tick</code></td>
+                <td><code>function(self)</code></td>
+                <td>called each frame until the task is completed<br />
+                returns true if completed, false if not</td>
+            </tr>
+        </table>
+        
+        <h2 class="title">Functions in Task module</h2>
+        
+        <table>
+            <tr>
+                <td><code>create</code></td>
+                <td><code>function()</code></td>
+                <td>creates a task</td>
+            </tr>
+            <tr>
+                <td><code>registerCallback</code></td>
+                <td><code>function(self, cb)</code></td>
+                <td>registers a task completion callback</td>
+            </tr>
+            <tr>
+                <td><code>unregisterCallback</code></td>
+                <td><code>function(self, cb)</code></td>
+                <td>unregisters a task completion callback</td>
+            </tr>
+        </table>
+        
+        <h2 class="title">Functions in TaskSystem module</h2>
+        
+        <table>
+            <tr>
+                <td><code>registerTask</code></td>
+                <td><code>function(task)</code></td>
+                <td>registers a task</td>
+            </tr>
+            <tr>
+                <td><code>unregisterTask</code></td>
+                <td><code>function(task)</code></td>
+                <td>unregisters a task</td>
+            </tr>
+        </table>
+	</body>
+</html>

@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../style.css">
+    </head>
+    <body class="page">
+        <a class="link" href="../Contents.html">Contents</a>
+        
+		<h1 class="title">Graphics</h1>
+        <p>Drawing stuff on the screen.</p>
+        
+        <h2 class="title">Structures</h2>
+        
+        <h3 class="title">GraphicsBackend</h3>
+        
+<pre><code>GraphicsBackend: {
+    registerBillboard,
+    unregisterBillboard,
+    registerOverlay,
+    unregisterOverlay,
+    render
+}</code></pre>
+
+        <table>
+            <tr>
+                <td><code>registerBillboard</code></td>
+                <td><code>function(self, billboard)</code></td>
+                <td>registers a billboard</td>
+            </tr>
+            <tr>
+                <td><code>unregisterBillboard</code></td>
+                <td><code>function(self, billboard)</code></td>
+                <td>unregisters a billboard</td>
+            </tr>
+            <tr>
+                <td><code>registerOverlay</code></td>
+                <td><code>function(self, overlay)</code></td>
+                <td>registers an overlay</td>
+            </tr>
+            <tr>
+                <td><code>unregisterOverlay</code></td>
+                <td><code>function(self, overlay)</code></td>
+                <td>unregisters an overlay</td>
+            </tr>
+            <tr>
+                <td><code>render</code></td>
+                <td><code>function(self)</code></td>
+                <td>render everything<br />first, the map and billboards are drawn, then the overlays</td>
+            </tr>
+        </table>
+
+        <h3 class="title">Backend Implementations</h3>
+        <ul>
+            <li><a class="link" href="">Canvas2DGraphicsBackend</a></li>
+            <li><a class="link" href="">WebGLGraphicsBackend</a></li>
+            <li><a class="link" href="">WebGLRaycasterGraphicsBackend</a></li>
+        </ul>
+	</body>
+</html>

@@ -1,11 +1,10 @@
-function Actor() {
-	// empty
-}
-
-Actor.prototype.wire = function() {
-	// empty
+const create = (wire, unwire) => {
+	return {
+		wire,
+		unwire
+	};
 };
 
-Actor.prototype.unwire = function() {
-	// empty
+export default {
+	create
 };

@@ -1,3 +1,7 @@
-function Scene() {
+const create = (obj) => {
 	
-}
+};
+
+export default {
+	create
+};

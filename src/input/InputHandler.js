@@ -1,8 +1,9 @@
-function InputHandler() {
-	// empty
-}
+const create = (handleInput) => {
+	return {
+		handleInput
+	};
+};
 
-InputHandler.prototype.handleInput = function() {
-	// empty
-	alert("hi");
+export default {
+	create
 };

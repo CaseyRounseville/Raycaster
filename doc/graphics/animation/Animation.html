@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <link rel="stylesheet" href="../../style.css">
+    </head>
+    <body class="page">
+        <a class="link" href="../Contents.html">Contents</a>
+        
+		<h1 class="title">Animation</h1>
+        <p>Changing image over time. Can be applied to billboards, overlays, and blocks.</p>
+        
+        <h2 class="title">Structures</h2>
+        
+        <h3 class="title">Animation</h3>
+        
+<pre><code>Animation: {
+    frames
+}</code></pre>
+
+        <table>
+            <tr>
+                <td><code>frames</code></td>
+                <td><code>[]</code></td>
+                <td>the frames of the animation</td>
+            </tr>
+            <tr>
+                <td><code>unregisterBillboard</code></td>
+                <td><code>function(self, billboard)</code></td>
+                <td>unregisters a billboard</td>
+            </tr>
+            <tr>
+                <td><code>registerOverlay</code></td>
+                <td><code>function(self, overlay)</code></td>
+                <td>registers an overlay</td>
+            </tr>
+            <tr>
+                <td><code>unregisterOverlay</code></td>
+                <td><code>function(self, overlay)</code></td>
+                <td>unregisters an overlay</td>
+            </tr>
+            <tr>
+                <td><code>render</code></td>
+                <td><code>function(self)</code></td>
+                <td>render everything<br />first, the map and billboards are drawn, then the overlays</td>
+            </tr>
+        </table>
+        
+        <h3 class="title">AnimationFrame</h3>
+        
+<pre><code>AnimationFrame: {
+    dur
+}</code></pre>
+
+        <table>
+            <tr>
+                <td><code>dur</code></td>
+                <td><code>number</code></td>
+                <td>duration of the animation frame, in game frames</td>
+            </tr>
+            <tr>
+                <td><code>unregisterBillboard</code></td>
+                <td><code>function(self, billboard)</code></td>
+                <td>unregisters a billboard</td>
+            </tr>
+            <tr>
+                <td><code>registerOverlay</code></td>
+                <td><code>function(self, overlay)</code></td>
+                <td>registers an overlay</td>
+            </tr>
+            <tr>
+                <td><code>unregisterOverlay</code></td>
+                <td><code>function(self, overlay)</code></td>
+                <td>unregisters an overlay</td>
+            </tr>
+            <tr>
+                <td><code>render</code></td>
+                <td><code>function(self)</code></td>
+                <td>render everything<br />first, the map and billboards are drawn, then the overlays</td>
+            </tr>
+        </table>
+        
+        <h3 class="title">Animator</h3>
+        
+<pre><code>Animator: {
+    anims,
+    animNum,
+    frameNum,
+    delayCounter,
+    cbs,
+    playbackMode
+}</code></pre>
+
+        <table>
+            <tr>
+                <td><code>anims</code></td>
+                <td><code>[]</code></td>
+                <td>registers a billboard</td>
+            </tr>
+            <tr>
+                <td><code>animNum</code></td>
+                <td><code>number</code></td>
+                <td>unregisters a billboard</td>
+            </tr>
+            <tr>
+                <td><code>frameNum</code></td>
+                <td><code>number</code></td>
+                <td>registers an overlay</td>
+            </tr>
+            <tr>
+                <td><code>delayCounter</code></td>
+                <td><code>number</code></td>
+                <td>unregisters an overlay</td>
+            </tr>
+            <tr>
+                <td><code>cbs</code></td>
+                <td><code>[]</code></td>
+                <td>render everything<br />first, the map and billboards are drawn, then the overlays</td>
+            </tr>
+            <tr>
+                <td><code>playbackMode</code></td>
+                <td><code>number</code></td>
+                <td>render everything<br />first, the map and billboards are drawn, then the overlays</td>
+            </tr>
+        </table>
+
+        <h3 class="title">Backend Implementations</h3>
+        <ul>
+            <li><a class="link" href="">Canvas2DGraphicsBackend</a></li>
+            <li><a class="link" href="">WebGLGraphicsBackend</a></li>
+            <li><a class="link" href="">WebGLRaycasterGraphicsBackend</a></li>
+        </ul>
+        
+        <h2 class="title">File Structure</h2>
+        <p>All animations stored in a file are required to have a version field.<br />
+        The version field is used to determine which loading strat to use to load the animation.</p>
+        
+        <h3 class="title">Version 0</h3>
+        
+<pre><code>{
+    version: number,
+    
+}</code></pre>
+	</body>
+</html>

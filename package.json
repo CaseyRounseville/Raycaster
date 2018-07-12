@@ -1,0 +1,25 @@
+{
+	"name": "raycaster",
+	"version": "0.0.0",
+	"dependencies": {
+		"sockets.io": "^1.0.1"
+	},
+	"devDependencies": {
+		"babel-loader": "^7.1.5",
+		"babel-preset-env": "^1.7.0",
+		"webpack": "^4.10.0",
+		"webpack-cli": "^2.1.4"
+	},
+	"scripts": {
+		"start": "webpack --display-modules && start index.html"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/CaseyRounseville/Raycaster.git"
+	},
+	"author": "Casey Rounseville",
+	"bugs": {
+		"url": "https://github.com/CaseyRounseville/Raycaster/issues"
+	},
+	"homepage": "https://github.com/CaseyRounseville/Raycaster#readme"
+}

@@ -1,12 +1,34 @@
-PlayerInputHandler.prototype = new InputHandler();
-PlayerInputHandler.prototype.constructor = PlayerInputHandler;
+import InputHandler from "../../input/InputHandler";
+
+import InputBackend from "../../input/backend/InputBackend";
 
 function PlayerInputHandler(player) {
 	this.player = player;
 }
 
-PlayerInputHandler.prototype.handleInput = function() {
-	if (inputBackend.isDown(BTN_LEFT)) {
-		this.player.pos.x -= 1;
+const create = (player) => {
+	let inputHandler = InputHandler.create(handleInput);
+	
+	inputHandler.player = player;
+	
+	return inputHandler;
+};
+
+const handleInput = (self, backend) => {
+	if (backend.isDown(backend, InputBackend.BTN_LEFT)) {
+		self.player.pos.x -= 1;
 	}
+	if (backend.isDown(backend, InputBackend.BTN_RIGHT)) {
+		self.player.pos.x += 1;
+	}
+	if (backend.isDown(backend, InputBackend.BTN_UP)) {
+		self.player.pos.y -= 1;
+	}
+	if (backend.isDown(backend, InputBackend.BTN_DOWN)) {
+		self.player.pos.y += 1;
+	}
+};
+
+export default {
+	create
 };
