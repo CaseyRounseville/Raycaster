@@ -25,17 +25,17 @@ const fillRect = (self, tlx, tly, w, h) => {
 };
 
 const renderTexture = (self,
-					   imgHandle,
-					   dest_tlx,
-					   dest_tly,
-					   dest_w,
-					   dest_h,
-					   src_tlx,
-					   src_tly,
-					   src_w,
-					   src_h,
-					   opacity,
-					   color) => {
+                       imgHandle,
+                       dest_tlx,
+                       dest_tly,
+                       dest_w,
+                       dest_h,
+                       src_tlx,
+                       src_tly,
+                       src_w,
+                       src_h,
+                       opacity,
+                       color) => {
 	// get context
 	let ctxt = self.ctxt;
 	
@@ -47,14 +47,14 @@ const renderTexture = (self,
 	
 	// draw image
 	ctxt.drawImage(img,
-				  src_tlx,
-				  src_tly,
-				  src_w,
-				  src_h,
-				  dest_tlx,
-				  dest_tly,
-				  dest_w,
-				  dest_h);
+                 src_tlx,
+                 src_tly,
+                 src_w,
+                 src_h,
+                 dest_tlx,
+                 dest_tly,
+                 dest_w,
+                 dest_h);
 	
 	// handle tinting(multiplication), if needed
 	if (color != Color.WHITE) {
@@ -114,16 +114,16 @@ const destroy = (self) => {
 
 export const create = () => {
 	let canvas2DGraphicsBackend = GraphicsBackend.create(fillRect,
-														 clearScreen,
-														 renderTexture,
-														 loadTexture,
-														 getTexture,
-														 destroyTexture,
-														 getFillColor,
-														 setFillColor,
-														 setTextColor,
-														 renderText,
-														 destroy);
+                                                       clearScreen,
+                                                       renderTexture,
+                                                       loadTexture,
+                                                       getTexture,
+                                                       destroyTexture,
+                                                       getFillColor,
+                                                       setFillColor,
+                                                       setTextColor,
+                                                       renderText,
+                                                       destroy);
 	
 	canvas2DGraphicsBackend.canvas = document.getElementById("canvas");
 	canvas2DGraphicsBackend.ctxt = canvas2DGraphicsBackend.canvas.getContext("2d");

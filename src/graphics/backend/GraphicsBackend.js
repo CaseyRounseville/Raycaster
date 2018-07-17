@@ -1,4 +1,5 @@
 import * as Camera from "../Camera";
+import * as ArrayUtil from "../../util/ArrayUtil";
 
 export const INTERNAL_WIDTH = 320;
 export const INTERNAL_HEIGHT = 240;
@@ -8,7 +9,15 @@ export const registerRenderer = (self, renderer) => {
 };
 
 export const unregisterRenderer = (self, renderer) => {
-	self.renderers.remove(renderer);
+	ArrayUtil.remove(self.renderers, renderer);
+};
+
+export const registerBillboard = (self, billboard) => {
+  self.billboards.push(billboard);
+};
+
+export const unregisterBillboard = (self, billboard) => {
+  ArrayUtil.remove(self.billboards, billboard);
 };
 
 const render = (self) => {
@@ -27,16 +36,15 @@ export const create = (fillRect,
                        destroyTexture,
                        getFillColor,
                        setFillColor,
-                       setTextColor,
-                       renderText,
+                       setBlockMap,
                        destroy) => {
 	return {
 		renderers: [],
+    billboards: [],
+    blockMap: undefined,
 		idToTexture: [],
 		camera: Camera.create(),
 		
-		registerRenderer,
-		unregisterRenderer,
 		render,
 		
 		fillRect,
@@ -47,8 +55,7 @@ export const create = (fillRect,
 		destroyTexture,
 		getFillColor,
 		setFillColor,
-		setTextColor,
-		renderText,
+    setBlockMap,
 		destroy
 	};
 };

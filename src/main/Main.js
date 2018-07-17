@@ -9,9 +9,10 @@ import * as Player from "../actor/player/Player";
 
 // set up global ctxt
 const globalCtxtStr = `{
-	"graphicsBackendName":	"canvas2D",
+	"graphicsBackendName":	"webGL",
 	"inputBackendName":		"default",
-	"physicsBackendName":	"default"	
+	"physicsBackendName":	"default",
+  "resBaseUrl": "http://localhost:3333/"
 }`;
 const globalCtxtConfig = GlobalContextConfig.create(globalCtxtStr);
 export const globalCtxt = GlobalContext.create(globalCtxtConfig);

@@ -11,7 +11,8 @@
 		"webpack-cli": "^2.1.4"
 	},
 	"scripts": {
-		"start": "webpack --display-modules && start index.html"
+		"start": "webpack --display-modules && start index.html",
+    "start-file-server": "start node tool/FileServer.js"
 	},
 	"repository": {
 		"type": "git",
