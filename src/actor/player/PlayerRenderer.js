@@ -1,15 +1,8 @@
-import * as GraphicsBackend from "../../graphics/backend/GraphicsBackend";
-import * as Renderer from "../../graphics/Renderer";
+export function PlayerRenderer(player) {
+  this.player = player;
+}
 
-const render = (self, backend) => {
-	backend.setFillColor(backend, 0xFF0000FF);
-	backend.fillRect(backend, self.player.pos.x - 10, self.player.pos.y - 10, 20, 20, 0xFF0000FF);
-};
-
-export const create = (player) => {
-	let playerRenderer = Renderer.create(render);
-	
-	playerRenderer.player = player;
-	
-	return playerRenderer;
+PlayerRenderer.prototype.render = function(backend) {
+  backend.setFillColor(0xFF0000FF);
+	backend.fillRect(this.player.pos.x - 10, this.player.pos.y - 10, 20, 20, 0xFF0000FF);
 };

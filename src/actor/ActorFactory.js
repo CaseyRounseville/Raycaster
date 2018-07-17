@@ -1,7 +1,7 @@
-import * as Player from "./player/Player";
+import { create as createPlayer } from "./player/Player";
 
 const creators = {
-  player: Player.create
+  Player: createPlayer
 };
 
 export const createActor = (protoActor) => {

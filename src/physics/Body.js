@@ -1,16 +1,16 @@
-export const create = (pos, vel, hitBox) => {
-	return {
-		pos,
-		vel,
-		hitBox,
-    listeners: []
-	};
+import * as ArrayUtil from "../util/ArrayUtil";
+
+export function Body(pos, vel, acc, hitBox) {
+  this.pos = pos;
+  this.vel = acc;
+  this.hitBox = hitBox;
+  this.cbs = [];
 }
 
-export const registerListener = (self, l) => {
-  
+Body.prototype.registerCallback = function(cb) {
+  this.cbs.push(cb);
 };
 
-export const unregisterListener = (self, l) => {
-  
+Body.prototype.unregisterCallback = function(cb) {
+  return ArrayUtil.remove(this.cbs, cb);
 };

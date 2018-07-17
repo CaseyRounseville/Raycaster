@@ -1,29 +1,51 @@
-import ResourceBackend from "./ResourceBackend";
+import { ResourceBackend } from "./ResourceBackend";
 
-import * as GraphicsBackend from "../../graphics/backend/GraphicsBackend";
+import { Resource } from "../Resource";
 
-import * as AnimationLoader from "../../graphics/animation/AnimationLoader";
+//import * as GraphicsBackend from "../../graphics/backend/GraphicsBackend";
+
+/*import * as AnimationLoader from "../../graphics/animation/AnimationLoader";
 
 import * as BlockMapLoader from "../../physics/block/BlockMapLoader";
-import * as BlockSetLoader from "../../physics/block/BlockSetLoader";
+import * as BlockSetLoader from "../../physics/block/BlockSetLoader";*/
 
 import * as IOUtil from "../../util/IOUtil";
-import * as Keeper from "../../util/Keeper";
 
-import * as GlobalContext from "../../main/GlobalContext";
+import { globalCtxt } from "../../main/GlobalContext";
 
-const loadResource = (self, resName) => {
-  let resObj = IOUtil.readFileFromNetwork(GlobalContext.resBaseUrl + "/" + resName);
+DefaultResourceBackend.prototype = Object.create(ResourceBackend.prototype);
+DefaultResourceBackend.prototype.constructor = DefaultResourceBackend;
+
+export function DefaultResourceBackend() {
+  ResourceBackend.call(this);
+  
+  this.idToRes = {};
+}
+
+DefaultResourceBackend.prototype.loadResource = function(id) {
+  const resObj = JSON.parse(IOUtil.readFileFromNetwork(globalCtxt.resBaseUrl + "res/packed/" + id + ".json"));
+  const res = new Resource();
+  
+  // textures
+  const graphicsBackend = globalCtxt.graphicsBackend;
+  resObj.textures.forEach((texObj) => {
+    const texId = texObj.id;
+    const b64 = texObj.data;
+    graphicsBackend.loadTexture(id, b64);
+    res.texIds.push(texObj.id);
+  });
+  
+  this.idToRes[id] = res;
 };
 
-const destroyResource = (self, resName) => {
+DefaultResourceBackend.prototype.destroyResource = function(id) {
+  const res = idToRes[id];
   
-};
-
-export const create = () => {
-  let self = ResourceBackend.create(loadResource, destroyResource);
+  // textures
+  const graphicsBackend = globalCtxt.graphicsBackend;
+  res.texIds.forEach((texId) => {
+    graphicsBackend.destroyTexture(texId);
+  });
   
-  self.resKeeper = Keeper.create(100);
-  
-  return self;
+  delete idToRes[id];
 };

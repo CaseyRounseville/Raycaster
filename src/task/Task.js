@@ -1,16 +1,13 @@
 import * as ArrayUtil from "../util/ArrayUtil";
 
-export const create = (tick) => {
-	return {
-		cbs: [],
-    tick
-	};
+export function Task() {
+  this.cbs = [];
+}
+
+Task.prototype.registerCallback = function(cb) {
+  this.cbs.push(cb);
 };
 
-export const registerCallback = (self, cb) => {
-  ArrayUtil.add(self.cbs, cb);
-};
-
-export const unregisterCallback = (self, cb) => {
-  ArrayUtil.remove(self.cbs, cb);
+Task.prototype.unregisterCallback = function(cb) {
+  ArrayUtil.remove(this.cbs, cb);
 };

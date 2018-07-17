@@ -1,4 +1,4 @@
-import * as Animation from "./Animation";
+import { Animation } from "./Animation";
 
 export const loadAnimation = (obj) => {
   

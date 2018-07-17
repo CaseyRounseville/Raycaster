@@ -1,5 +1,4 @@
-export const create = () => {
-  return {
-    textures: []
-  };
-};
+export function Resource() {
+  this.texIds = [];
+  this.sndIds = [];
+}

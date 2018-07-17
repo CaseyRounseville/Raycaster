@@ -1,5 +1,5 @@
-export const create = (handleInput) => {
+/*export const create = (handleInput) => {
 	return {
 		handleInput
 	};
-};
+};*/

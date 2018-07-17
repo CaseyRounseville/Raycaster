@@ -1,30 +1,8 @@
-import * as GraphicsBackend from "./GraphicsBackend";
+import { GraphicsBackend, INTERNAL_WIDTH, INTERNAL_HEIGHT } from "./GraphicsBackend";
 
 import * as Color from "../util/Color.js";
 
-import * as Keeper from "../../util/Keeper";
-
-const MAX_IMAGES = 64;
-
-const setFillColor = (self, color) => {
-	var r = Color.getComp1i(color);
-	var g = Color.getComp2i(color);
-	var b = Color.getComp3i(color);
-	var a = Color.getComp4f(color);
-	self.ctxt.fillStyle = "rgb(" + r + ", " + g + ", " + b + ", " + a + ")";
-	self.fillColor = color;
-};
-
-const getFillColor = (self) => {
-	return self.fillColor;
-};
-
-const fillRect = (self, tlx, tly, w, h) => {
-	let ctxt = self.ctxt;
-	ctxt.fillRect(tlx, tly, w, h);
-};
-
-const renderTexture = (self,
+/*const renderTexture = (self,
                        imgHandle,
                        dest_tlx,
                        dest_tly,
@@ -40,7 +18,7 @@ const renderTexture = (self,
 	let ctxt = self.ctxt;
 	
 	// get img
-	let img = self.imgKeeper[imgHandle];
+	let img = self.idToImg[imgHandle];
 	
 	// set opacity
 	ctxt.setGlobalAlpha(opacity);
@@ -73,72 +51,80 @@ const renderTexture = (self,
 		setFillColor(oldFillColor);
 		ctxt.globalCompositeOperation = oldGlobalCompositeOperation;
 	}
-};
+};*/
 
-const clearScreen = (self) => {
-	self.setFillColor(self, Color.BLACK);
-	self.fillRect(self, 0, 0, 320, 240);
-};
+Canvas2DGraphicsBackend.prototype = Object.create(GraphicsBackend.prototype);
+Canvas2DGraphicsBackend.prototype.constructor = Canvas2DGraphicsBackend;
 
-const loadTexture = (self, id, url) => {
-	let imgKeeper = self.imgKeeper;
-	let imgHandle = ++imgKeeper.lastImgHandle;
-	let img = new Image();
-	img.src = url;
-	imgKeeper[imgHandle] = img;
-	
-	self.idToTexture[id] = Texture.create();
-	
-	return imgHandle;
-};
-
-const getTexture = (self, id) => {
-	return self.idToTexture[id];
-};
-
-const destroyTexture = (self, imgHandle) => {
-	delete self.imgKeeper[imgHandle];
-};
-
-const setTextColor = (self, color) => {
-	
-};
-
-const renderText = (self, text, x, y) => {
-	
-};
-
-const destroy = (self) => {
-	//window.removeEventListener("resize", self.resize);
+export function Canvas2DGraphicsBackend() {
+  GraphicsBackend.call(this);
+  
+  this.ctxt = document.getElementById("canvas").getContext("2d");
+  this.fillColor = Color.BLACK;
+  this.tintColor = Color.WHITE;
+  this.idToImg = {};
 }
 
-export const create = () => {
-	let canvas2DGraphicsBackend = GraphicsBackend.create(fillRect,
-                                                       clearScreen,
-                                                       renderTexture,
-                                                       loadTexture,
-                                                       getTexture,
-                                                       destroyTexture,
-                                                       getFillColor,
-                                                       setFillColor,
-                                                       setTextColor,
-                                                       renderText,
-                                                       destroy);
-	
-	canvas2DGraphicsBackend.canvas = document.getElementById("canvas");
-	canvas2DGraphicsBackend.ctxt = canvas2DGraphicsBackend.canvas.getContext("2d");
-	canvas2DGraphicsBackend.fillColor = Color.BLACK;
-	//setFillColor(canvas2DGraphicsBackend, Color.PINK);
-	canvas2DGraphicsBackend.imgKeeper = Keeper.create(MAX_IMAGES);
-	
-	const resize = (event) => {
-		//canvas2DGraphicsBackend.canvas.width = window.innerWidth;
-		//canvas2DGraphicsBackend.canvas.height = window.innerHeight;
-		canvas2DGraphicsBackend.ctxt = canvas2DGraphicsBackend.canvas.getContext("2d");
-		canvas2DGraphicsBackend.ctxt.scale(window.innerWidth / GraphicsBackend.INTERNAL_WIDTH, window.innerHeight / GraphicsBackend.INTERNAL_HEIGHT);
-	}
-	canvas2DGraphicsBackend.resize = resize;
-	//window.addEventListener("resize", resize);
-	
-	return canvas2DGraphicsBackend;
+Canvas2DGraphicsBackend.prototype.getFillColor = function() {
+  return this.fillColor;
+};
+
+Canvas2DGraphicsBackend.prototype.setFillColor = function(color) {
+  const r = Color.getComp1i(color);
+	const g = Color.getComp2i(color);
+	const b = Color.getComp3i(color);
+	const a = Color.getComp4f(color);
+  
+	this.ctxt.fillStyle = "rgb(" + r + ", " + g + ", " + b + ", " + a + ")";
+  this.fillColor = color;
+};
+
+Canvas2DGraphicsBackend.prototype.fillRect = function(x, y, w, h) {
+  this.ctxt.fillRect(x, y, w, h);
+};
+
+Canvas2DGraphicsBackend.prototype.getTintColor = function() {
+  return this.tintColor;
+};
+
+Canvas2DGraphicsBackend.prototype.setTintColor = function(tintColor) {
+  this.tintColor = tintColor;
+};
+
+Canvas2DGraphicsBackend.prototype.renderTexture = function(id,
+                                                           destX,
+                                                           destY,
+                                                           destW,
+                                                           destH,
+                                                           srcX,
+                                                           srcY,
+                                                           srcW,
+                                                           srcH) {
+  this.ctxt.drawImage(this.idToImg[id],
+                      srcX,
+                      srcY,
+                      srcW,
+                      srcH,
+                      destX,
+                      destY,
+                      destW,
+                      destH);
+};
+
+Canvas2DGraphicsBackend.prototype.clearScreen = function() {
+  this.ctxt.clearRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT);
+};
+
+Canvas2DGraphicsBackend.prototype.loadTexture = function(id, b64) {
+  const img = new Image();
+  img.src = b64;
+  this.idToImg[id] = img;
+};
+
+Canvas2DGraphicsBackend.prototype.destroyTexture = function(id) {
+  delete this.idToImg[id];
+};
+
+Canvas2DGraphicsBackend.prototype.destroy = function() {
+  
 };

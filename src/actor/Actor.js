@@ -4,3 +4,7 @@ export const create = (wire, unwire) => {
 		unwire
 	};
 };
+
+function Actor() {
+  
+}

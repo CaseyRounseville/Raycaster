@@ -1,48 +1,54 @@
-import * as GraphicsBackend from "../graphics/backend/GraphicsBackend";
-import * as Canvas2DGraphicsBackend from "../graphics/backend/Canvas2DGraphicsBackend";
-import * as WebGLGraphicsBackend from "../graphics/backend/WebGLGraphicsBackend";
+import { GraphicsBackend } from "../graphics/backend/GraphicsBackend";
+import { Canvas2DGraphicsBackend } from "../graphics/backend/Canvas2DGraphicsBackend";
+import { WebGLGraphicsBackend } from "../graphics/backend/WebGLGraphicsBackend";
 
-import * as InputBackend from "../input/backend/InputBackend";
-import * as DefaultInputBackend from "../input/backend/DefaultInputBackend";
+import { InputBackend } from "../input/backend/InputBackend";
+import { DefaultInputBackend } from "../input/backend/DefaultInputBackend";
 
-import * as PhysicsBackend from "../physics/backend/PhysicsBackend";
-import * as DefaultPhysicsBackend from "../physics/backend/DefaultPhysicsBackend";
+import { PhysicsBackend } from "../physics/backend/PhysicsBackend";
+import { DefaultPhysicsBackend } from "../physics/backend/DefaultPhysicsBackend";
 
-export const create = (config) => {
-	let self = {};
-	
-	// graphics
+import { ResourceBackend } from "../resource/backend/ResourceBackend";
+import { DefaultResourceBackend } from "../resource/backend/DefaultResourceBackend";
+
+function GlobalContext(config) {
+  // graphics
 	switch (config.graphicsBackendName) {
 	default:
 		console.log("GlobalContext.create: UNRECOGNIZED OR UNSPECIFIED GRAPHICS BACKEND NAME " + config.graphicsBackendName + "; DEFAULTING TO canvas2D");
 	case "canvas2D":
-		self.graphicsBackend = Canvas2DGraphicsBackend.create();
+		this.graphicsBackend = new Canvas2DGraphicsBackend();
 		break;
   case "webGL":
-    self.graphicsBackend = WebGLGraphicsBackend.create();
+    this.graphicsBackend = new WebGLGraphicsBackend();
     break;
 	}
 	
 	// input
 	switch (config.inputBackendName) {
 	default:
-		console.log("GlobalContext.create: UNRECOGNIZED OR UNSPECIFIED INPUT BACKEND NAME " + config.graphicsBackendName + "; DEFAULTING TO default");
+		console.log("GlobalContext.create: UNRECOGNIZED OR UNSPECIFIED INPUT BACKEND NAME " + config.inputBackendName + "; DEFAULTING TO default");
 	case "default":
-		self.inputBackend = DefaultInputBackend.create();
+		this.inputBackend = new DefaultInputBackend();
 		break;
 	}
 	
 	// physics
 	switch (config.physicsBackendName) {
 	default:
-		console.log("GlobalContext.create: UNRECOGNIZED OR UNSPECIFIED PHYSICS BACKEND NAME " + config.graphicsBackendName + "; DEFAULTING TO defualt");
+		console.log("GlobalContext.create: UNRECOGNIZED OR UNSPECIFIED PHYSICS BACKEND NAME " + config.physicsBackendName + "; DEFAULTING TO defualt");
 	case "default":
-		self.physicsBackend = DefaultPhysicsBackend.create();
+		//this.physicsBackend = new DefaultPhysicsBackend();
 		break;
 	}
   
   // resource
-  self.resBaseUrl = config.resBaseUrl;
-	
-	return self;
+  this.resBaseUrl = config.resBaseUrl;
+  this.resourceBackend = new DefaultResourceBackend();
+}
+
+export let globalCtxt = undefined;
+
+export const initGlobalCtxt = (config) => {
+  globalCtxt =  new GlobalContext(config);
 };

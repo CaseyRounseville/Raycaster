@@ -3,11 +3,11 @@ import * as Dialog from "./Dialog";
 const dialogStack = [];
 
 export const pushDialog = (dialog) => {
-  let prev = dialogStack[dialogStack.length - 1];
-  Dialog.setActive(prev, false);
+  const prev = dialogStack[dialogStack.length - 1];
+  prev.setActive(false);
   
   dialogStack.push(dialog);
-  Dialog.setActive(dialog, true);
+  dialog.setActive(true);
   
   document.body.insertAdjacentHtml("beforeend", dialog.html);
 };

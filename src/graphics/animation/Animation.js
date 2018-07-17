@@ -1,7 +1,3 @@
-export const create = () => {
-  let self = {
-    
-  };
+export function Animation() {
   
-  return self;
-};
+}

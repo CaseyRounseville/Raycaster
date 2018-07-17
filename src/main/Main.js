@@ -1,36 +1,34 @@
 import * as GlobalContextConfig from "./GlobalContextConfig";
-import * as GlobalContext from "./GlobalContext";
+import { initGlobalCtxt, globalCtxt } from "./GlobalContext";
 
-import * as TestInputHandler from "../input/TestInputHandler";
+import { TestInputHandler } from "../input/TestInputHandler";
 
-import * as InputBackend from "../input/backend/InputBackend";
+import { Player } from "../actor/player/Player";
 
-import * as Player from "../actor/player/Player";
-
-// set up global ctxt
+// set up global ctxt as a singleton
 const globalCtxtStr = `{
-	"graphicsBackendName":	"webGL",
+	"graphicsBackendName":	"canvas2D",
 	"inputBackendName":		"default",
 	"physicsBackendName":	"default",
   "resBaseUrl": "http://localhost:3333/"
 }`;
 const globalCtxtConfig = GlobalContextConfig.create(globalCtxtStr);
-export const globalCtxt = GlobalContext.create(globalCtxtConfig);
+initGlobalCtxt(globalCtxtConfig);
 
 // retrieve backends
 const graphicsBackend = globalCtxt.graphicsBackend;
 const inputBackend = globalCtxt.inputBackend;
 const physicsBackend = globalCtxt.physicsBackend;
 
-const testInputHandler = TestInputHandler.create();
-InputBackend.registerInputHandler(inputBackend, testInputHandler);
+const testInputHandler = new TestInputHandler();
+inputBackend.registerInputHandler(testInputHandler);
 
-const player = Player.create(20, 20);
-player.wire(player);
+const player = new Player(20, 20);
+player.wire();
 
 const loop = () => {
-	InputBackend.process(inputBackend);
-	graphicsBackend.render(graphicsBackend);
+	inputBackend.process();
+	graphicsBackend.render();
 };
 
 // start game loop

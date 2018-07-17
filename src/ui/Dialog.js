@@ -1,12 +1,4 @@
-export const create = (html) => {
-  return {
-    html,
-    selectedOption: 0,
-    active: true
-  };
-};
-
-export const setActive = (self, active) => {
+/*export const setActive = (self, active) => {
   self.active = active;
   if (active) {
     // register input listener,
@@ -17,4 +9,10 @@ export const setActive = (self, active) => {
     // maybe active can be used to dim/gray out
     // inactive boxes
   }
-};
+};*/
+
+export function Dialog(html) {
+  this.html = html;
+  this.selectedOption = 0;
+  this.active = true;
+}

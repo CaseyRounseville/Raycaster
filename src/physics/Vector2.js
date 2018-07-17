@@ -1,9 +1,7 @@
-export const create = (x, y) => {
-	return {
-		x,
-		y
-	};
-};
+export function Vector2(x, y) {
+  this.x = x;
+  this.y = y;
+}
 
 export const add = (dest, src1, src2) => {
 	dest.x = src1.x + src2.x;

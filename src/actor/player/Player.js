@@ -1,5 +1,5 @@
-import * as PlayerRenderer from "./PlayerRenderer";
-import * as PlayerInputHandler from "./PlayerInputHandler";
+import { PlayerRenderer } from "./PlayerRenderer";
+import { PlayerInputHandler } from "./PlayerInputHandler";
 
 import * as InputBackend from "../../input/backend/InputBackend";
 
@@ -7,51 +7,41 @@ import * as GraphicsBackend from "../../graphics/backend/GraphicsBackend";
 
 import * as Actor from "../Actor";
 
-import * as Vector2 from "../../physics/Vector2";
+import { Vector2 } from "../../physics/Vector2";
 
-import * as GlobalContext from "../../main/GlobalContext";
-import { globalCtxt } from "../../main/Main";
+import { globalCtxt } from "../../main/GlobalContext";
 
-const wire = (self) => {
-	alert("wiring player");
+export function Player(x, y) {
+  this.pos = new Vector2(x, y);
+	this.vel = new Vector2(0, 0);
+  
+  this.inputHandler = new PlayerInputHandler(this);
+  this.renderer = new PlayerRenderer(this);
+}
+
+Player.prototype.wire = function() {
+  alert("wiring player");
+  
+  const graphicsBackend = globalCtxt.graphicsBackend;
+	graphicsBackend.registerRenderer(this.renderer);
 	
-	//let globalCtxt = Main.globalCtxt;
-	
-	let graphicsBackend = globalCtxt.graphicsBackend;
-	GraphicsBackend.registerRenderer(graphicsBackend, self.renderer);
-	
-	let inputBackend = globalCtxt.inputBackend;
-	InputBackend.registerInputHandler(inputBackend, self.inputHandler);
+	const inputBackend = globalCtxt.inputBackend;
+	inputBackend.registerInputHandler(this.inputHandler);
+  
+  const resourceBackend = globalCtxt.resourceBackend;
+  resourceBackend.loadResource("test");
 };
 
-const unwire = (self) => {
-	alert("unwiring player");
+Player.prototype.unwire = function() {
+  alert("unwiring player");
+  
+  const graphicsBackend = globalCtxt.graphicsBackend;
+	graphicsBackend.unregisterRenderer(this.renderer);
 	
-	//let globalCtxt = Main.globalCtxt;
-	
-	let graphicsBackend = globalCtxt.graphicsBackend;
-	GraphicsBackend.unregisterRenderer(graphicsBackend, self.renderer);
-	
-	let inputBackend = globalCtxt.inputBackend;
-	InputBackend.unregisterInputHandler(inputBackend, self.inputHandler);
+	const inputBackend = globalCtxt.inputBackend;
+	inputBackend.unregisterInputHandler(this.inputHandler);
 };
 
-export const create = (x, y) => {
-	let player = Actor.create(wire, unwire);
-	
-	player.pos = Vector2.create(x, y);
-	player.vel = Vector2.create(0, 0);
-	
-	player.renderer = PlayerRenderer.create(player);
-	
-	player.inputHandler = PlayerInputHandler.create(player);
-	
-	return player;
+export const create = (protoActor) => {
+  return new Player(protoActor.x, protoActor.y);
 };
-
-/*
-const create = (protoActor) => {
-	...
-	could return null/undef, so no need for separate creator class
-};
-*/

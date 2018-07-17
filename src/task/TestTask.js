@@ -1,17 +1,18 @@
-import * as Task from "./Task";
+import { Task } from "./Task";
 
-const tick = (self) => {
-  self.counter++;
-  if (self.counter == 60) {
-    self.counter = 0;
+TestTask.prototype = Object.create(Task.prototype);
+TestTask.prototype.constructor = TestTask;
+
+export function TestTask() {
+  Task.call(this);
+  
+  this.counter = 0;
+}
+
+TestTask.prototype.tick = function() {
+  this.counter++;
+  if (this.counter == 60) {
+    this.counter = 0;
     console.log("TestTask#tick: one second has passed");
   }
-};
-
-export const create = () => {
-  let self = Task.create(tick);
-  
-  self.counter = 0;
-  
-  return self;
 };

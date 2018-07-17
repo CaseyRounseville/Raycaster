@@ -1,26 +1,20 @@
-import * as InputHandler from "../../input/InputHandler";
-
 import * as InputBackend from "../../input/backend/InputBackend";
 
-export const create = (player) => {
-	let self = InputHandler.create(handleInput);
-	
-	self.player = player;
-	
-	return self;
-};
+export function PlayerInputHandler(player) {
+  this.player = player;
+}
 
-const handleInput = (self, backend) => {
-	if (InputBackend.isDown(backend, InputBackend.BTN_LEFT)) {
-		self.player.pos.x -= 1;
+PlayerInputHandler.prototype.handleInput = function(backend) {
+  if (backend.isDown(InputBackend.BTN_LEFT)) {
+    this.player.pos.x -= 1;
+  }
+  if (backend.isDown(InputBackend.BTN_RIGHT)) {
+		this.player.pos.x += 1;
 	}
-	if (InputBackend.isDown(backend, InputBackend.BTN_RIGHT)) {
-		self.player.pos.x += 1;
+	if (backend.isDown(InputBackend.BTN_UP)) {
+		this.player.pos.y -= 1;
 	}
-	if (InputBackend.isDown(backend, InputBackend.BTN_UP)) {
-		self.player.pos.y -= 1;
-	}
-	if (InputBackend.isDown(backend, InputBackend.BTN_DOWN)) {
-		self.player.pos.y += 1;
+	if (backend.isDown(InputBackend.BTN_DOWN)) {
+		this.player.pos.y += 1;
 	}
 };

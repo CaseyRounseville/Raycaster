@@ -1,3 +1,3 @@
-export const create = () => {
+export function Billboard() {
   
-};
+}
