@@ -1,5 +1,11 @@
 import * as ArrayUtil from "../util/ArrayUtil";
 
+/*
+functions
+  wire: void
+  unwire: void
+  tick: bool
+*/
 export function Task() {
   this.cbs = [];
 }

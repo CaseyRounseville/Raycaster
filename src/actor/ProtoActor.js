@@ -1,4 +1,5 @@
-export function ProtoActor(type, x, y, rot, horizDir, vertDir, arg) {
+export function ProtoActor(room, type, x, y, rot, horizDir, vertDir, arg) {
+  this.room = room;
   this.type = type;
   this.x = x;
   this.y = y;

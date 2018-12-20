@@ -249,3 +249,11 @@ WebGLGraphicsBackend.prototype.destroyProgram = function(progHandle) {
 WebGLGraphicsBackend.prototype.clearScreen = function() {
   
 };
+
+WebGLGraphicsBackend.prototype.registerMesh = function(id, mesh) {
+  
+};
+
+WebGLGraphicsBackend.prototype.unregisterMesh = function(id) {
+  
+};

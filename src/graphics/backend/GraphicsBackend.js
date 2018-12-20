@@ -39,6 +39,7 @@ export const INTERNAL_HEIGHT = 240;
 export function GraphicsBackend() {
   this.renderers = [];
   this.billboards = [];
+  this.overlays = [];
   this.blockMap = undefined;
   this.idToTexture = [];// maybe {} or keeper?
   this.camera = new Camera();
@@ -65,6 +66,18 @@ GraphicsBackend.prototype.registerBillboard = function(billboard) {
 
 GraphicsBackend.prototype.unregisterBillboard = function(billboard) {
   ArrayUtil.remove(this.billboards, billboard);
+};
+
+/*
+maybe move the regbillboard and regoverlay functions to subtypes
+because webgl will need to do more set up
+*/
+GraphicsBackend.prototype.registerOverlay = function(overlay) {
+  this.overlays.push(overlay);
+};
+
+GraphicsBackend.prototype.unregisterOverlay = function(overlay) {
+  ArrayUtil.remove(this.overlays, overlay);
 };
 
 GraphicsBackend.prototype.render = function() {

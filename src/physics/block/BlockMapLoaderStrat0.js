@@ -7,4 +7,5 @@ export const loadBlockMap = (obj) => {
 		"data": <number[width * height]>
 	}
 	*/
+  return {};
 };

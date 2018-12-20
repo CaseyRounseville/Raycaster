@@ -1,4 +1,5 @@
-export function Scene(blockMap, rooms) {
+export function Scene(blockMap, actors, entrances) {
   this.blockMap = blockMap;
-  this.rooms = rooms;
+  this.rooms = actors;
+  this.entrances = entrances;
 }

@@ -1,48 +1,107 @@
-export const create = (width, height, northData, southData, eastData, westData, flatData, heightData, collData) => {
-	return {
-		width,
-		height,
-    northData,
-    southData,
-    eastData,
-    westData,
-    flatData,
-    heightData,
-    collData
-	};
-};
+import { Vector2 } from "../Vector2";
+import { Vector3 } from "../Vector3";
+import { Vector4 } from "../Vector4";
 
-export const generateMesh = (self) => {
-  let numVerts = self.width * self.height * 8;
-  let verts = [];
-  for (let row = 0; row < self.height; row++) {
-    for (let col = 0; col < self.width; col++) {
-      let baseIndex = row * width + col;
+import { Mesh } from "../../graphics/mesh/Mesh";
+import { Vertex } from "../../graphics/mesh/Vertex";
+
+export function BlockMap(width, height, northData, southData, eastData, westData, flatData, heightData, collData) {
+	this.width = width;
+	this.height = height;
+  this.northData = northData;
+  this.southData = southData;
+  this.eastData = eastData;
+  this.westData = westData;
+  this.flatData = flatData;
+  this.heightData = heightData;
+  this.collData = collData;
+}
+
+/*
+for webgl:
+  maybe use instanced rendering for better performance?
+  have a 1x1x1 cube for a mesh, and use dimensions as
+  instance attributes(since only height changes, and
+  all start at 0)
+    * textures and color stuff changes too.
+*/
+BlockMap.prototype.generateMesh = function() {
+  // const numVertices = this.width * this.height * 8;
+  // const vertices = [];
+  
+  // /*
+  // each vertex is used by 6 triangles
+        // +------+
+       // /      /|
+      // /      / |
+     // /      /  |
+    // /      /   |
+   // /      /    |
+  // +------+--   |
+  // |\     |  \--+
+  // | \    |    /
+  // |  \   |   /
+  // |   \  |  /
+  // |    \ | /
+  // |     \|/
+  // +------+
+  // */
+  // const numIndices = this.numVertices * 6;
+  // const indices = [];
+  // for (let row = 0; row < this.height; row++) {
+    // for (let col = 0; col < this.width; col++) {
+      // const baseIndex = row * width + col;
       
-      // bottom top left
-      verts[baseIndex + 0] =  { x: col,     y: row,     z: 0 };
+      // const height = this.heightData[baseIndex];
+      // const north = this.northData[baseIndex];
+      // const south = this.southData[baseIndex];
+      // const east = this.eastData[baseIndex];
+      // const west = this.westData[baseIndex];
+      // const flat = this.flatData[baseIndex];
       
-      // bottom bottom left
-      verts[baseIndex + 1] =  { x: col,     y: row + 1, z: 0 };
+      // // bottom top left
+      // vertices[baseIndex + 0] = new Vertex(new Vector3(col, row, 0),
+                                        // new Vector2(),
+                                        // new Vector4(1.0, 1.0, 1.0, 1.0));
       
-      // bottom bottom right
-      verts[baseIndex + 2] =  { x: col + 1, y: row + 1, z: 0 };
+      // // bottom bottom left
+      // vertices[baseIndex + 1] = new Vertex(new Vector3(col, row + 1, 0),
+                                        // new Vector2(),
+                                        // new Vector4(1.0, 1.0, 1.0, 1.0));
       
-      // bottom top right
-      verts[baseIndex + 3] =  { x: col + 1, y: row,     z: 0 };
+      // // bottom bottom right
+      // vertices[baseIndex + 2] = new Vertex(new Vector3(col + 1, row + 1, 0),
+                                        // new Vector2(),
+                                        // new Vector4(1.0, 1.0, 1.0, 1.0));
       
-      // top top left
-      verts[baseIndex + 4] =  { x: col,     y: row,     z: self.heightData[baseIndex] };
+      // // bottom top right
+      // vertices[baseIndex + 3] = new Vertex(new Vector3(col + 1, row, 0),
+                                        // new Vector2(),
+                                        // new Vector4(1.0, 1.0, 1.0, 1.0));
       
-      // top bottom left
-      verts[baseIndex + 5] =  { x: col,     y: row + 1, z: self.heightData[baseIndex] };
+      // // top top left
+      // vertices[baseIndex + 4] = new Vertex(new Vector3(col, row, height),
+                                        // new Vector2(),
+                                        // new Vector4(1.0, 1.0, 1.0, 1.0));
+      
+      // // top bottom left
+      // vertices[baseIndex + 5] = new Vertex(new Vector3(col, row + 1, height),
+                                        // new Vector2(),
+                                        // new Vector4(1.0, 1.0, 1.0, 1.0));
      
-      // top bottom right
-      verts[baseIndex + 6] =  { x: col + 1, y: row + 1, z: self.heightData[baseIndex] };
+      // // top bottom right
+      // vertices[baseIndex + 6] = new Vertex(new Vector3(col + 1, row + 1, height),
+                                        // new Vector2(),
+                                        // new Vector4(1.0, 1.0, 1.0, 1.0));
       
-      // top top right
-      verts[baseIndex + 7] =  { x: col + 1, y: row,     z: self.heightData[baseIndex] };
-    }
-  }
-  return verts;
+      // // top top right
+      // vertices[baseIndex + 7] = new Vertex(new Vector3(col + 1, row, height),
+                                        // new Vector2(),
+                                        // new Vector4(1.0, 1.0, 1.0, 1.0));
+    // }
+  // }
+  
+  // // should return new mesh obj
+  // return vertices;
+  return {};
 };

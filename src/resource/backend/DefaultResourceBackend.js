@@ -18,8 +18,6 @@ DefaultResourceBackend.prototype.constructor = DefaultResourceBackend;
 
 export function DefaultResourceBackend() {
   ResourceBackend.call(this);
-  
-  this.idToRes = {};
 }
 
 DefaultResourceBackend.prototype.loadResource = function(id) {
@@ -31,8 +29,8 @@ DefaultResourceBackend.prototype.loadResource = function(id) {
   resObj.textures.forEach((texObj) => {
     const texId = texObj.id;
     const b64 = texObj.data;
-    graphicsBackend.loadTexture(id, b64);
-    res.texIds.push(texObj.id);
+    graphicsBackend.loadTexture(texId, b64);
+    res.texIds.push(texId);
   });
   
   this.idToRes[id] = res;

@@ -45,10 +45,13 @@ function GlobalContext(config) {
   // resource
   this.resBaseUrl = config.resBaseUrl;
   this.resourceBackend = new DefaultResourceBackend();
+  
+  // scene
+  this.scene = {};
 }
 
+// singleton
 export let globalCtxt = undefined;
-
 export const initGlobalCtxt = (config) => {
   globalCtxt =  new GlobalContext(config);
 };
