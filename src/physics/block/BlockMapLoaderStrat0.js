@@ -9,6 +9,7 @@ export const loadBlockMap = (obj) => {
 		"data": <number[width * height]>
 	}
 	*/
-  return new BlockMap(obj.width, obj.height, obj.northData, obj.southData,
-      obj.eastData, obj.westData, obj.flatData, obj.heightData, obj.collData);
+  return new BlockMap(obj.width, obj.height, obj.texId, obj.northData,
+		obj.southData, obj.eastData, obj.westData, obj.flatData,
+		obj.heightData, obj.collData);
 };

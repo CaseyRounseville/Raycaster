@@ -36,7 +36,7 @@ player.wire();
 globalCtxt.player = player;
 
 // set up scene(title screen maybe)
-changeScene("this-doesnt-matter");
+changeScene("scene-0", "scene-0");
 
 const loop = () => {
 	inputBackend.process();

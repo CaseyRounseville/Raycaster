@@ -8,7 +8,7 @@ import { Renderer } from "./Renderer";
 
 import { equalsWithinTol } from "../../util/FloatUtil";
 
-import { SIZE as BLOCK_SIZE } from "../../physics/block/Block";
+import { SIZE as BLOCK_SIZE, blocksToPixels } from "../../physics/block/Block";
 
 // the tolerance of the ray's angle during raycasting calculations, in radians
 const RAY_ANG_TOL = 0.00001;
@@ -96,14 +96,14 @@ Canvas2DRaycaster.prototype.render = function() {
 			// either direction
 			let blocksTraveledX = 0;
 			let blocksTraveledY = 0;
+			
+			// keep track of what kind of wall he hit closest;
+			// true means horizontal, false means vertical
+			let horizWall;
 			while (blocksTraveledX < VISIBILITY && blocksTraveledY < VISIBILITY) {
 				// the grid lines to take the next wall query at
 				let nextHorizLine = rayy;
 				let nextVertLine = rayx;
-
-				// keep track of what kind of wall he hit closest;
-				// true means horizontal, false means vertical
-				let horizWall;
 
 				// see if we are in any of the edge cases, or somewhere in
 				// between
@@ -337,8 +337,21 @@ Canvas2DRaycaster.prototype.render = function() {
 				if (firstBlockHitId == 2) {
 					this.backend.setFillColor(RED);
 				}
-				this.backend.fillRect(strip, verticalCenter - heightOnScreen / 2,
-						1, heightOnScreen);
+				//this.backend.fillRect(strip, verticalCenter - heightOnScreen / 2,
+				//		1, heightOnScreen);
+				if (horizWall) {
+					// avoid texture bleeding
+					const srcX = Math.floor(blocksToPixels(rayx - Math.floor(rayx)));
+					this.backend.renderTexture(this.blockMap.getTexId(), strip,
+							verticalCenter - heightOnScreen / 2, 1,
+							heightOnScreen, srcX, 0, 1, BLOCK_SIZE);
+				} else {
+					// avoid texture bleeding
+					const srcX = Math.floor(blocksToPixels(1.0 - (rayy - Math.floor(rayy))));
+					this.backend.renderTexture(this.blockMap.getTexId(), strip,
+							verticalCenter - heightOnScreen / 2, 1,
+							heightOnScreen, srcX, 0, 1, BLOCK_SIZE);
+				}
 			}
 		}
 	}

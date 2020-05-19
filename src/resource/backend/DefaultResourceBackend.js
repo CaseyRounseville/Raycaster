@@ -2,6 +2,8 @@ import { ResourceBackend } from "./ResourceBackend";
 
 import { Resource } from "../Resource";
 
+import { regProtoScene, unregProtoScene } from "../../scene/SceneLoader";
+
 //import * as GraphicsBackend from "../../graphics/backend/GraphicsBackend";
 
 /*import * as AnimationLoader from "../../graphics/animation/AnimationLoader";
@@ -17,33 +19,47 @@ DefaultResourceBackend.prototype = Object.create(ResourceBackend.prototype);
 DefaultResourceBackend.prototype.constructor = DefaultResourceBackend;
 
 export function DefaultResourceBackend() {
-  ResourceBackend.call(this);
+	ResourceBackend.call(this);
 }
 
 DefaultResourceBackend.prototype.loadResource = function(id) {
-  const resObj = JSON.parse(IOUtil.readFileFromNetwork(globalCtxt.resBaseUrl + "res/packed/" + id + ".json"));
-  const res = new Resource();
-  
-  // textures
-  const graphicsBackend = globalCtxt.graphicsBackend;
-  resObj.textures.forEach((texObj) => {
-    const texId = texObj.id;
-    const b64 = texObj.data;
-    graphicsBackend.loadTexture(texId, b64);
-    res.texIds.push(texId);
-  });
-  
-  this.idToRes[id] = res;
+	const resObj = JSON.parse(IOUtil.readFileFromNetwork(
+			globalCtxt.resBaseUrl + "res/packed/" + id + ".json"));
+	const res = new Resource();
+	
+	// textures
+	const graphicsBackend = globalCtxt.graphicsBackend;
+	resObj.textures.forEach((texObj) => {
+		const texId = texObj.id;
+		const b64 = texObj.data;
+		graphicsBackend.loadTexture(texId, b64);
+		res.texIds.push(texId);
+	});
+
+	// scenes
+	resObj.scenes.forEach((sceneSrcObj) => {
+		const sceneId = sceneSrcObj.id;
+		const protoScene = JSON.parse(sceneSrcObj.data);
+		regProtoScene(sceneId, protoScene);
+		res.sceneIds.push(sceneId);
+	});
+	
+	this.idToRes[id] = res;
 };
 
 DefaultResourceBackend.prototype.destroyResource = function(id) {
-  const res = idToRes[id];
-  
-  // textures
-  const graphicsBackend = globalCtxt.graphicsBackend;
-  res.texIds.forEach((texId) => {
-    graphicsBackend.destroyTexture(texId);
-  });
-  
-  delete idToRes[id];
+	const res = idToRes[id];
+	
+	// textures
+	const graphicsBackend = globalCtxt.graphicsBackend;
+	res.texIds.forEach((texId) => {
+		graphicsBackend.destroyTexture(texId);
+	});
+
+	// scenes
+	res.sceneIds.forEach((sceneID) => {
+		unregProtoScene(sceneId);
+	});
+	
+	delete idToRes[id];
 };

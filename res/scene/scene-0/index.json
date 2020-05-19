@@ -1,0 +1,8 @@
+{
+	"textures": [
+		{ "id": "scene-0-walls", "file": "walls.png" }
+	],
+	"scenes": [
+		{ "id": "scene-0", "file": "test-scene-0.json" }
+	]
+}

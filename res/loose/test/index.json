@@ -1,8 +1,8 @@
 {
-  "textures": [
-    {
-      "file": "test-tex.png",
-      "id": "test-0"
-    }
-  ]
+	"scenes": [
+
+	],
+	"textures": [
+		{ "id": "test-0", "file": "test-tex.png" }
+	]
 }

@@ -8,9 +8,11 @@ import { Mesh } from "../../graphics/mesh/Mesh";
 import { Vertex } from "../../graphics/mesh/Vertex";
 import { DebugBlockMapRenderer } from "./DebugBlockMapRenderer";
 
-export function BlockMap(width, height, northData, southData, eastData, westData, flatData, heightData, collData) {
+export function BlockMap(width, height, texId, northData, southData, eastData,
+		westData, flatData, heightData, collData) {
 	this.width = width;
 	this.height = height;
+	this.texId = texId;
 	this.northData = northData;
 	this.southData = southData;
 	this.eastData = eastData;
@@ -130,6 +132,10 @@ BlockMap.prototype.getWidth = function() {
 BlockMap.prototype.getHeight = function() {
   return this.height;
 };
+
+BlockMap.prototype.getTexId = function() {
+	return this.texId;
+}
 
 BlockMap.prototype.getNorthData = function(row, col) {
   return this.northData[row * this.width + col];

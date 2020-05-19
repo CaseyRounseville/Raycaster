@@ -2,166 +2,35 @@ import { globalCtxt } from "../main/GlobalContext";
 
 import { loadScene as strat0 } from "./SceneLoaderStrat0";
 
+// provide a way fro the resource system to give the scene loader the
+// information needed to load a scene;
+// this is necessary because the way a scene is loaded is a bit messy.
+// first, loadScene is called with a resource group id and a scene id;
+// the scene with the specified id lives inside the resource group;
+// loadScene calls loadResource, which registers a sceneSrcObj(protoscene);
+// loadScene then uses the scene id to retrieve the protoscene from the table
+const id2protoScene = {};
+export const regProtoScene = (id, protoScene) => {
+  id2protoScene[id] = protoScene;
+};
+export const unregProtoScene = (id) => {
+  delete id2protoScene[id];
+};
+
+// map strat number(version of scene format) to loading strategy function
 const strats = [ strat0 ];
 
 // TODO: actually load a scene instead of generating one
-export const loadScene = (id) => {
-  const obj = {
-    "version": 0,
-    
-    "skyBox": {
-      "version": 0
-    },
-    
-    "blockMap": {
-      "version": 0,
-      "width": 10,
-      "height": 10,
-      "texId": "",
-      "northData": [
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-      ],
-      "southData": [
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-      ],
-      "eastData": [
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-      ],
-      "westData": [
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-      ],
-      "flatData": [
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-      ],
-      "heightData": [
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-        0, 0, 0, 0, 0, 0, 0, 0, 0, 0
-      ],
-      "collData": [
-        1, 1, 1, 1, 0, 0, 0, 1, 1, 1,
-        1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        1, 0, 0, 0, 0, 2, 0, 0, 1, 1,
-        1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        1, 0, 0, 0, 0, 0, 0, 0, 0, 1,
-        1, 2, 0, 0, 0, 1, 0, 0, 0, 1,
-        1, 1, 1, 1, 1, 1, 1, 1, 1, 1
-      ]
-    },
-    
-    "actors": {
-      "version": 0,
-      "cast": [
-      {
-        "room": 0,
-        "type": "skeleton",
-        "x": 3.4,
-        "y": 6.7,
-        "z": 0.5,
-        "arg": {
-          "color": "normal",
-          "flag": 38
-        }
-      },
-      {
-        "room": 1,
-        "type": "switch",
-        "x": 6.8,
-        "y": 9.9,
-        "z": 0.5,
-        "arg": {
-          "flag": 7
-        }
-      },
-      {
-        "room": -1,
-        "type": "door",
-        "x": 6.8,
-        "y": 9.9,
-        "z": 0.5,
-        "arg": {
-          "fromFront": 1,
-          "fromBack": 0
-        }
-      }
-      ]
-    },
-    
-    "entrances": {
-    "version": 0,
-    "cast": [
-    {
-      "room": 1,
-      "type": "player",
-      "x": 0.0,
-      "y": 0.0,
-      "z": 0.5,
-      "arg": {
-        
-      }
-    }
-    ]
-    }
-  }
-  
-  /*// read from network
-  const resourceBackend = globalCtxt.resourceBackend;
-  const obj = resourceBackend.loadResource(id);*/
-  
-  return strats[obj.version](obj);
+export const loadScene = (resId, sceneId) => {
+  // load up the resource in which the scene lives
+  const resBackend = globalCtxt.resourceBackend;
+  resBackend.loadResource(resId);
+
+  // that call to load resource should have registered a protoscene in the
+  // table
+  const protoScene = id2protoScene[sceneId];
+
+  // pass the scene source object on to the appropriate loader for the version
+  // of the format
+  return strats[protoScene.version](protoScene);
 };
