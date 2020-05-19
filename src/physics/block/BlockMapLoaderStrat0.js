@@ -1,3 +1,5 @@
+import { BlockMap } from "./BlockMap";
+
 export const loadBlockMap = (obj) => {
 	/*
 	format: JSON
@@ -7,5 +9,6 @@ export const loadBlockMap = (obj) => {
 		"data": <number[width * height]>
 	}
 	*/
-  return {};
+  return new BlockMap(obj.width, obj.height, obj.northData, obj.southData,
+      obj.eastData, obj.westData, obj.flatData, obj.heightData, obj.collData);
 };

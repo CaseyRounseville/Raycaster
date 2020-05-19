@@ -1,12 +1,12 @@
 export const WHITE		= 0xFFFFFFFF,
              BLACK		= 0x000000FF,
-             PINK		  = 0xFF00FFFF,
-             YELLOW	  = 0x00FFFFFF,
-             RED		  = 0xFF0000FF,
-             GREEN	  = 0x00FF00FF,
-             BLUE		  = 0x0000FFFF,
-             GRAY		  = 0x7F7F7FFF,
-             PURPLE	  = 0x7F007FFF;
+             PINK		= 0xFF00FFFF,
+             YELLOW	    = 0x00FFFFFF,
+             RED		= 0xFF0000FF,
+             GREEN	    = 0x00FF00FF,
+             BLUE		= 0x0000FFFF,
+             GRAY		= 0x7F7F7FFF,
+             PURPLE	    = 0x7F007FFF;
 
 export const getComp1i = (color) => {
 	return (color >> 24) & 0xFF;

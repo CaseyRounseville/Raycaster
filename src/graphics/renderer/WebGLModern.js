@@ -13,8 +13,8 @@ export function WebGLModern() {
   this.blockMapMeshId = 0;
 }
 
-WebGLModern.prototype.setSkyBox = function() {
-  
+WebGLModern.prototype.setSkyBox = function(skyBox) {
+  // TODO: implement me
 };
 
 WebGLModern.setBlockMap = function(blockMap) {
@@ -56,7 +56,7 @@ WebGLModern.prototype.render = function() {
   
   // overlays
   this.overlays.forEach((overlay) => {
-    overlay.render(this);
+    overlay.render(this.backend);
   });
   
   // drawarrays or some other webgl function

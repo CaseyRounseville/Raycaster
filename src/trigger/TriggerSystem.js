@@ -17,7 +17,7 @@ export const setTrigger = (trigger) => {
     return;
   } else {
     triggerListeners = triggerToTriggerListeners[trigger];
-    for (int i = 0; i < triggerListeners.length; i++) {
+    for (let i = 0; i < triggerListeners.length; i++) {
       triggerListeners[i].triggerSet();
     }
   }
@@ -28,7 +28,7 @@ export const clearTrigger = (trigger) => {
     return;
   } else {
     triggerListeners = triggerToTriggerListeners[trigger];
-    for (int i = 0; i < triggerListeners.length; i++) {
+    for (let i = 0; i < triggerListeners.length; i++) {
       triggerListeners[i].triggerCleared();
     }
   }
@@ -36,7 +36,7 @@ export const clearTrigger = (trigger) => {
 
 export const touchTrigger = (trigger) => {
   triggerListeners = triggerToTriggerListeners[trigger];
-  for (int i = 0; i < triggerListeners.length; i++) {
+  for (let i = 0; i < triggerListeners.length; i++) {
     triggerListeners[i].triggerTouched();
   }
 };

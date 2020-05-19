@@ -125,9 +125,9 @@ const wallCast = (self, backend, strip) => {
 			dyHoriz = y - yHoriz;
 			distToWallHoriz = dyHoriz / Math.sin(r);
 			
-			if () {
-				
-			}
+			//if () {
+			//	
+			//}
 			
 			if (distToWallVert < distToWallHoriz) {
 				// vertical wall is closer

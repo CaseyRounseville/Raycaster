@@ -24,7 +24,7 @@ export const unregisterTask = (task) => {
 
 export const tick = () => {
   processAddRemove();
-  for (int i = 0; i < tasks.length; i++) {
+  for (let i = 0; i < tasks.length; i++) {
     let task = tasks[i];
     if (task.tick()) {
       ArrayUtil.remove(tasks, task);

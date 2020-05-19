@@ -1,8 +1,18 @@
+import { Scene } from "./Scene";
 
+import { loadBlockMap } from "../physics/block/BlockMapLoader";
+import { loadProtoActors } from "../actor/ProtoActorsLoader";
 
 export const loadScene = (obj) => {
-  // extract actors
-  const actors = obj.actors;
+  // extract block map
+  const blockMap = loadBlockMap(obj.blockMap);
   
-  return scene;
+  // extract actors
+  const protoActors = loadProtoActors(obj.actors);
+  
+  // extract entrances
+  const entrances = loadProtoActors(obj.entrances);
+  
+  // construct scene
+  return new Scene(blockMap, protoActors, entrances);
 };

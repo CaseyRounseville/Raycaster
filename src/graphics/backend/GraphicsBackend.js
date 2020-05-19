@@ -1,8 +1,11 @@
-import { Camera } from "../Camera";
 import * as ArrayUtil from "../../util/ArrayUtil";
 
 export const INTERNAL_WIDTH = 320;
 export const INTERNAL_HEIGHT = 240;
+
+// camera needs to be imported after the internal width and height are defined,
+// since graphics backend and camera depend cyclically on each other
+import { Camera } from "../Camera";
 
 /*export const create = (fillRect,
                        clearScreen,
@@ -87,3 +90,7 @@ GraphicsBackend.prototype.render = function() {
      r.render(this);
 	}
 };
+
+GraphicsBackend.prototype.getCamera = function() {
+  return this.camera;
+}

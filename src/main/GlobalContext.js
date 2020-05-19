@@ -1,6 +1,9 @@
 import { GraphicsBackend } from "../graphics/backend/GraphicsBackend";
 import { Canvas2DGraphicsBackend } from "../graphics/backend/Canvas2DGraphicsBackend";
 import { WebGLGraphicsBackend } from "../graphics/backend/WebGLGraphicsBackend";
+import { Canvas2DRaycaster } from "../graphics/renderer/Canvas2DRaycaster";
+import { WebGLModern } from "../graphics/renderer/WebGLModern";
+import { WebGLRaycaster } from "../graphics/renderer/WebGLRaycaster";
 
 import { InputBackend } from "../input/backend/InputBackend";
 import { DefaultInputBackend } from "../input/backend/DefaultInputBackend";
@@ -23,6 +26,19 @@ function GlobalContext(config) {
     this.graphicsBackend = new WebGLGraphicsBackend();
     break;
 	}
+  switch (config.rendererName) {
+  default:
+    console.log("GlobalContext.create: UNRECOGNIZED OR UNSPECIFIED RENDERER NAME " + config.rendererName + "; DEFAULTING TO canvas2D");
+  case "canvas2DRaycaster":
+    this.renderer = new Canvas2DRaycaster(this.graphicsBackend);
+    break;
+  case "webGLModern":
+    this.renderer = new WebGLModern(this.graphicsBackend);
+    break;
+  case "webGLRaycaster":
+    this.renderer = new WebGLRaycaster(this.graphicsBackend);
+    break;
+  }
 	
 	// input
 	switch (config.inputBackendName) {
@@ -47,7 +63,10 @@ function GlobalContext(config) {
   this.resourceBackend = new DefaultResourceBackend();
   
   // scene
-  this.scene = {};
+  this.scene = undefined;
+  
+  // player
+  this.player = undefined;
 }
 
 // singleton

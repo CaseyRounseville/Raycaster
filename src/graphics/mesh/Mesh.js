@@ -1,3 +1,5 @@
+import { Vertex } from "./Vertex";
+
 import { Vector3 } from "../../physics/Vector3";
 
 export function Mesh(vertices, indices) {
