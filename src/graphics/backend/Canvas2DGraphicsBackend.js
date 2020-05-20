@@ -1,5 +1,7 @@
 import { GraphicsBackend, INTERNAL_WIDTH, INTERNAL_HEIGHT } from "./GraphicsBackend";
 
+import { Canvas2DTexture } from "../texture/Canvas2DTexture";
+
 import * as Color from "../util/Color.js";
 
 /*const renderTexture = (self,
@@ -71,7 +73,7 @@ export function Canvas2DGraphicsBackend() {
 	this.ctxt = document.getElementById("canvas").getContext("2d");
 	this.fillColor = Color.BLACK;
 	this.tintColor = Color.WHITE;
-	this.idToImg = {};
+	this.id2texture = {};
 }
 
 /**
@@ -157,8 +159,8 @@ Canvas2DGraphicsBackend.prototype.setTintColor = function(tintColor) {
  */
 Canvas2DGraphicsBackend.prototype.renderTexture = function(id, destX, destY,
 		destW, destH, srcX, srcY, srcW, srcH) {
-	this.ctxt.drawImage(this.idToImg[id], srcX, srcY, srcW, srcH, destX, destY,
-    		destW, destH);
+	this.ctxt.drawImage(this.id2texture[id].getImg(), srcX, srcY, srcW, srcH,
+			destX, destY, destW, destH);
 };
 
 /**
@@ -187,9 +189,30 @@ Canvas2DGraphicsBackend.prototype.clearScreen = function() {
 Canvas2DGraphicsBackend.prototype.loadTexture = function(id, b64) {
 	const img = new Image();
 	img.src = b64;
-	this.idToImg[id] = img;
+	const texture = new Canvas2DTexture(id, img.width, img.height, img);
+	this.id2texture[id] = texture;
+
+	// we have to wait until the image is done loading in order to read the
+	// width and height, otherwise it will gladly return us a zero
+	img.onload = function() {
+		texture.setWidth(img.width);
+		texture.setHeight(img.height);
+	};
 };
 
+/**
+ * Return the texture of the specified id. If no such texture exists, undefined
+ * is returned.
+ * 
+ * Parameters:
+ * id -- The id of the texture to return.
+ * 
+ * Returns:
+ * The requested texture, or undefined if there is no texture by the given id.
+ */
+Canvas2DGraphicsBackend.prototype.getTexture = function(id) {
+	return this.id2texture[id];
+}
 
 /**
  * Destroy the texture of the specified id.
@@ -201,7 +224,7 @@ Canvas2DGraphicsBackend.prototype.loadTexture = function(id, b64) {
  * Nothing.
  */
 Canvas2DGraphicsBackend.prototype.destroyTexture = function(id) {
-	delete this.idToImg[id];
+	delete this.id2texture[id];
 };
 
 Canvas2DGraphicsBackend.prototype.destroy = function() {

@@ -13,6 +13,15 @@ import { SIZE as BLOCK_SIZE, blocksToPixels } from "../../physics/block/Block";
 // the tolerance of the ray's angle during raycasting calculations, in radians
 const RAY_ANG_TOL = 0.00001;
 
+const SIDE_NORTH = 0;
+const SIDE_SOUTH = 1;
+const SIDE_EAST = 2;
+const SIDE_WEST = 3;
+
+const isHorizWall = (side) => {
+	return side == SIDE_NORTH || side == SIDE_SOUTH;
+};
+
 Canvas2DRaycaster.prototype = Object.create(Renderer.prototype);
 Canvas2DRaycaster.prototype.constructor = Canvas2DRaycaster;
 
@@ -24,8 +33,8 @@ export function Canvas2DRaycaster(backend) {
 	
 };
 
-Canvas2DRaycaster.prototype.setSkyBox = function() {
-	Renderer.prototype.setSkyBox.call(this);
+Canvas2DRaycaster.prototype.setSkyBox = function(skyBox) {
+	Renderer.prototype.setSkyBox.call(this, skyBox);
 };
 
 Canvas2DRaycaster.prototype.registerBlockMap = function(blockMap) {
@@ -53,8 +62,39 @@ Canvas2DRaycaster.prototype.render = function() {
 	this.backend.clearScreen();
 	
 	// render skyBox
-	this.backend.setFillColor(BLUE);
-	this.backend.fillRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT / 2);
+	if (this.skyBox) {
+		// we may need to render the skybox in two parts, depending on if we
+		// need to wrap around the texture
+		const skyBoxTex = this.skyBox.getTexture();
+		const skyBoxTexWidth = skyBoxTex.getWidth();
+		const skyBoxTexStartSrcX = this.skyBox.getStartX(this.backend.getCamera());
+
+		// we need to wrap if we are starting more than 3/4 of the way along
+		// the texture
+		if (skyBoxTexStartSrcX / skyBoxTexWidth > 0.75) {
+			// do the first render, as much as we can without wrapping
+			const firstRenderWidth = skyBoxTexWidth - skyBoxTexStartSrcX;
+			this.backend.renderTexture(skyBoxTex.getId(), 0, 0,
+					firstRenderWidth, INTERNAL_HEIGHT, skyBoxTexStartSrcX, 0,
+					firstRenderWidth, INTERNAL_HEIGHT);
+
+			// do the second render, the wrapped part
+			const leftOverWidth = INTERNAL_WIDTH - firstRenderWidth;
+			this.backend.renderTexture(skyBoxTex.getId(), firstRenderWidth, 0,
+					leftOverWidth, INTERNAL_HEIGHT, 0, 0, leftOverWidth,
+					INTERNAL_HEIGHT);
+		} else {
+			// we can draw the whole skybox without wrapping
+			this.backend.renderTexture(skyBoxTex.getId(), 0, 0, INTERNAL_WIDTH,
+					INTERNAL_HEIGHT, skyBoxTexStartSrcX, 0, INTERNAL_WIDTH,
+					INTERNAL_HEIGHT);
+		}
+	} else {
+		this.backend.setFillColor(BLUE);
+		this.backend.fillRect(0, 0, INTERNAL_WIDTH, INTERNAL_HEIGHT / 2);
+	}
+
+	// render floor
 	this.backend.setFillColor(GRAY);
 	this.backend.fillRect(0, INTERNAL_HEIGHT / 2, INTERNAL_WIDTH, INTERNAL_HEIGHT / 2);
 	
@@ -97,9 +137,8 @@ Canvas2DRaycaster.prototype.render = function() {
 			let blocksTraveledX = 0;
 			let blocksTraveledY = 0;
 			
-			// keep track of what kind of wall he hit closest;
-			// true means horizontal, false means vertical
-			let horizWall;
+			// keep track of what side of a wall he hit closest;
+			let sideOfWall;
 			while (blocksTraveledX < VISIBILITY && blocksTraveledY < VISIBILITY) {
 				// the grid lines to take the next wall query at
 				let nextHorizLine = rayy;
@@ -170,14 +209,22 @@ Canvas2DRaycaster.prototype.render = function() {
 				// we will choose the closest one as our point to look at, and
 				// to be the next starting point of the ray on the next
 				// iteration
-				if (exactlyLeft || exactlyRight) {
+				if (exactlyRight) {
 					// we move in the x-direction only, so we leave rayy alone
 					rayx = nextVertLine;
-					horizWall = false;
-				} else if (exactlyUp || exactlyDown) {
+					sideOfWall = SIDE_WEST;
+				} else if (exactlyUp) {
 					// we move in the y-direction only, so we leave rayx alone
 					rayy = nextHorizLine;
-					horizWall = true;
+					sideOfWall = SIDE_SOUTH;
+				} else if (exactlyLeft) {
+					// we move in the x-direction only, so we leave rayy alone
+					rayx = nextVertLine;
+					sideOfWall = SIDE_EAST;
+				} else if (exactlyDown) {
+					// we move in the y-direction only, so we leave rayx alone
+					rayy = nextHorizLine;
+					sideOfWall = SIDE_NORTH;
 				} else {
 					// slope is rise over run, however we must invert the rise,
 					// since the y-axis increases in the downward direction;
@@ -217,11 +264,19 @@ Canvas2DRaycaster.prototype.render = function() {
 					if (nextHorizLineDist <= nextVertLineDist) {
 						rayx = nextHorizLineX;
 						rayy = nextHorizLine;
-						horizWall = true;
+						if (rayAng > 0 && rayAng < Math.PI) {
+							sideOfWall = SIDE_SOUTH;
+						} else {
+							sideOfWall = SIDE_NORTH;
+						}
 					} else {
 						rayx = nextVertLine;
 						rayy = nextVertLineY;
-						horizWall = false;
+						if (rayAng < Math.PI / 2 || rayAng > 3 * Math.PI / 2) {
+							sideOfWall = SIDE_WEST;
+						} else {
+							sideOfWall = SIDE_EAST;
+						}
 					}
 				}
 
@@ -261,7 +316,7 @@ Canvas2DRaycaster.prototype.render = function() {
 				} else {
 					if (rayAng < Math.PI / 2) {
 						// upper-right quadrant
-						if (horizWall) {
+						if (isHorizWall(sideOfWall)) {
 							gridRow = Math.floor(rayy) - 1;
 							gridCol = Math.floor(rayx);
 						} else {
@@ -270,7 +325,7 @@ Canvas2DRaycaster.prototype.render = function() {
 						}
 					} else if (rayAng < Math.PI) {
 						// upper-left quadrant
-						if (horizWall) {
+						if (isHorizWall(sideOfWall)) {
 							gridRow = Math.floor(rayy) - 1;
 							gridCol = Math.floor(rayx);
 						} else {
@@ -279,7 +334,7 @@ Canvas2DRaycaster.prototype.render = function() {
 						}
 					} else if (rayAng < 3 * Math.PI / 2) {
 						// lower-left quadrant
-						if (horizWall) {
+						if (isHorizWall(sideOfWall)) {
 							gridRow = Math.floor(rayy);
 							gridCol = Math.floor(rayx);
 						} else {
@@ -288,7 +343,7 @@ Canvas2DRaycaster.prototype.render = function() {
 						}
 					} else {
 						// lower-right quadrant
-						if (horizWall) {
+						if (isHorizWall(sideOfWall)) {
 							gridRow = Math.floor(rayy);
 							gridCol = Math.floor(rayx);
 						} else {
@@ -301,10 +356,27 @@ Canvas2DRaycaster.prototype.render = function() {
 				// read the value from the map
 				if (!(gridRow < 0 || gridRow > mapHeight - 1 || gridCol < 0 ||
 						gridCol > mapWidth - 1)) {
-					const collVal = this.blockMap.getCollData(gridRow,
-							gridCol);
-					if (collVal > 0) {
-						firstBlockHitId = collVal;
+					let wallVal;
+					switch (sideOfWall) {
+						case SIDE_NORTH:
+							wallVal = this.blockMap.getNorthData(gridRow,
+									gridCol);
+							break;
+						case SIDE_SOUTH:
+							wallVal = this.blockMap.getSouthData(gridRow,
+									gridCol);
+							break;
+						case SIDE_EAST:
+							wallVal = this.blockMap.getEastData(gridRow,
+									gridCol);
+							break;
+						case SIDE_WEST:
+							wallVal = this.blockMap.getWestData(gridRow,
+									gridCol);
+							break;
+					}
+					if (wallVal > 0) {
+						firstBlockHitId = wallVal;
 						break;
 					}
 				}
@@ -339,18 +411,43 @@ Canvas2DRaycaster.prototype.render = function() {
 				}
 				//this.backend.fillRect(strip, verticalCenter - heightOnScreen / 2,
 				//		1, heightOnScreen);
-				if (horizWall) {
-					// avoid texture bleeding
-					const srcX = Math.floor(blocksToPixels(rayx - Math.floor(rayx)));
-					this.backend.renderTexture(this.blockMap.getTexId(), strip,
-							verticalCenter - heightOnScreen / 2, 1,
-							heightOnScreen, srcX, 0, 1, BLOCK_SIZE);
-				} else {
-					// avoid texture bleeding
-					const srcX = Math.floor(blocksToPixels(1.0 - (rayy - Math.floor(rayy))));
-					this.backend.renderTexture(this.blockMap.getTexId(), strip,
-							verticalCenter - heightOnScreen / 2, 1,
-							heightOnScreen, srcX, 0, 1, BLOCK_SIZE);
+				const texSheet = this.blockMap.getTexSheet();
+				const texCell = texSheet.getCell(firstBlockHitId);
+				let srcX;
+				let srcY;
+				switch (sideOfWall) {
+					case SIDE_NORTH:
+						// avoid texture bleeding
+						srcX = texCell.getX() + Math.floor(blocksToPixels(1.0 - (rayx - Math.floor(rayx))));
+						srcY = texCell.getY();
+						this.backend.renderTexture(texSheet.getTexture().getId(), strip,
+								verticalCenter - heightOnScreen / 2, 1,
+								heightOnScreen, srcX, srcY, 1, BLOCK_SIZE);
+						break;
+					case SIDE_SOUTH:
+						// avoid texture bleeding
+						srcX = texCell.getX() + Math.floor(blocksToPixels(rayx - Math.floor(rayx)));
+						srcY = texCell.getY();
+						this.backend.renderTexture(texSheet.getTexture().getId(), strip,
+								verticalCenter - heightOnScreen / 2, 1,
+								heightOnScreen, srcX, srcY, 1, BLOCK_SIZE);
+						break;
+					case SIDE_EAST:
+						// avoid texture bleeding
+						srcX = texCell.getX() + Math.floor(blocksToPixels(1.0 - (rayy - Math.floor(rayy))));
+						srcY = texCell.getY();
+						this.backend.renderTexture(texSheet.getTexture().getId(), strip,
+								verticalCenter - heightOnScreen / 2, 1,
+								heightOnScreen, srcX, srcY, 1, BLOCK_SIZE);
+						break;
+					case SIDE_WEST:
+						// avoid texture bleeding
+						srcX = texCell.getX() + Math.floor(blocksToPixels(rayy - Math.floor(rayy)));
+						srcY = texCell.getY();
+						this.backend.renderTexture(texSheet.getTexture().getId(), strip,
+								verticalCenter - heightOnScreen / 2, 1,
+								heightOnScreen, srcX, srcY, 1, BLOCK_SIZE);
+						break;
 				}
 			}
 		}

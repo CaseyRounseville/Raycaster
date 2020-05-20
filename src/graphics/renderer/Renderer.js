@@ -4,6 +4,7 @@ export function Renderer() {
   this.billboards = [];
   this.overlays = [];
   this.blockMap = undefined;
+  this.skyBox = undefined;
 }
 
 Renderer.prototype.registerBillboard = function(billboard) {
@@ -21,6 +22,10 @@ Renderer.prototype.registerOverlay = function(overlay) {
 Renderer.prototype.unregisterOverlay = function(overlay) {
   ArrayUtil.remove(this.overlays, overlay);
 };
+
+Renderer.prototype.setSkyBox = function(skyBox) {
+  this.skyBox = skyBox;
+}
 
 /* to be implemented in Renderer implementations
 Renderer.prototype.registerBlockMap = function(blockMap) {

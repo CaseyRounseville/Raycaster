@@ -8,11 +8,11 @@ import { Mesh } from "../../graphics/mesh/Mesh";
 import { Vertex } from "../../graphics/mesh/Vertex";
 import { DebugBlockMapRenderer } from "./DebugBlockMapRenderer";
 
-export function BlockMap(width, height, texId, northData, southData, eastData,
-		westData, flatData, heightData, collData) {
+export function BlockMap(width, height, texSheet, northData, southData,
+		eastData, westData, flatData, heightData, collData) {
 	this.width = width;
 	this.height = height;
-	this.texId = texId;
+	this.texSheet = texSheet;
 	this.northData = northData;
 	this.southData = southData;
 	this.eastData = eastData;
@@ -21,7 +21,7 @@ export function BlockMap(width, height, texId, northData, southData, eastData,
 	this.heightData = heightData;
 	this.collData = collData;
 	this.renderer = new DebugBlockMapRenderer(this);
-};
+}
 
 BlockMap.prototype.wire = function() {
 	console.log("wiring block map");
@@ -133,8 +133,8 @@ BlockMap.prototype.getHeight = function() {
   return this.height;
 };
 
-BlockMap.prototype.getTexId = function() {
-	return this.texId;
+BlockMap.prototype.getTexSheet = function() {
+	return this.texSheet;
 }
 
 BlockMap.prototype.getNorthData = function(row, col) {
@@ -142,7 +142,7 @@ BlockMap.prototype.getNorthData = function(row, col) {
 };
 
 BlockMap.prototype.getSouthData = function(row, col) {
-  return this.SouthData[row * this.width + col];
+  return this.southData[row * this.width + col];
 };
 
 BlockMap.prototype.getEastData = function(row, col) {

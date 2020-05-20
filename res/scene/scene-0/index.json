@@ -1,6 +1,7 @@
 {
 	"textures": [
-		{ "id": "scene-0-walls", "file": "walls.png" }
+		{ "id": "scene-0-walls", "file": "walls.png" },
+		{ "id": "skybox-0", "file": "skybox-0.png" }
 	],
 	"scenes": [
 		{ "id": "scene-0", "file": "test-scene-0.json" }
