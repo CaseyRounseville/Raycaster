@@ -70,7 +70,11 @@ Canvas2DGraphicsBackend.prototype.constructor = Canvas2DGraphicsBackend;
 export function Canvas2DGraphicsBackend() {
 	GraphicsBackend.call(this);
 
+	// get the canvas graphics context, and disable image smoothing to make it
+	// less blurry
 	this.ctxt = document.getElementById("canvas").getContext("2d");
+	this.ctxt.imageSmoothingEnabled = false;
+
 	this.fillColor = Color.BLACK;
 	this.tintColor = Color.WHITE;
 	this.id2texture = {};
