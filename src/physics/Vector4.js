@@ -1,3 +1,6 @@
+import { equalsWithinTol as floatEqualsWithinTol } from "../util/FloatUtil";
+import { runInThisContext } from "vm";
+
 export function Vector4(x, y, z, w) {
   this.x = x;
   this.y = y;
@@ -11,6 +14,11 @@ Vector4.prototype.normalize = function() {
   this.y /= euclideanDist;
   this.z /= euclideanDist;
   this.w /= euclideanDist;
+};
+
+Vector4.prototype.magnitude = function() {
+  return Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z +
+      this.w * this.w);
 };
 
 export const add = (dest, src1, src2) => {
@@ -45,4 +53,22 @@ export const divide = (dest, src1, src2) => {
   dest.z = src1.z / src2.z;
   dest.w = src1.w / src2.w;
 	return dest;
+};
+
+export const copy = (dest, src) => {
+	dest.x = src.x;
+	dest.y = src.y;
+	dest.z = src.z;
+	dest.w = src.w;
+};
+
+export const equals = (a, b) => {
+  return a.x == b.x && a.y == b.y && a.z == b.z && a.w == b.w;
+};
+
+export const equalsWithinTol = (a, b, tol) => {
+  return floatEqualsWithinTol(a.x, b.x, tol) &&
+      floatEqualsWithinTol(a.y, b.y, tol) &&
+      floatEqualsWithinTol(a.z, b.z, tol) &&
+      floatEqualsWithinTol(a.w, b.w, tol);
 };

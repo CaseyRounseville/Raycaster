@@ -8,7 +8,23 @@ import { Renderer } from "./Renderer";
 
 import { equalsWithinTol } from "../../util/FloatUtil";
 
-import { SIZE as BLOCK_SIZE, blocksToPixels } from "../../physics/block/Block";
+import {
+	SIZE as BLOCK_SIZE,
+	blocksToPixels,
+	pixelsToBlocks
+} from "../../physics/block/Block";
+
+import {
+	add as vector1Add,
+	copy as vector1Copy
+} from "../../physics/Vector1";
+
+import {
+	add as vector2Add,
+	copy as vector2Copy
+} from "../../physics/Vector2";
+
+import { wrapFull } from "../../physics/Angle"
 
 // the tolerance of the ray's angle during raycasting calculations, in radians
 const RAY_ANG_TOL = 0.00001;
@@ -100,23 +116,60 @@ Canvas2DRaycaster.prototype.render = function() {
 	
 	// only render the blockmap if it exists
 	if (this.blockMap) {
-		console.log("rendering the block map");
-		// render blockMap and billboards(need to do them at the same time)
+		// render blockMap and billboards(need to do them at the same time);
 		const camera = this.backend.getCamera();
-		const camPos = camera.getPos();
-		const camRot = camera.getRot();
+		let camPos = camera.getPos();
+		let camRot = camera.getRot();
+
+		// take the left/right and angle head bobbing effect into account, if
+		// there is one;
+		// the up/down head bobbing will need to be done when each strip is
+		// rendered
+		if (this.headBob) {
+			// we need to add the left/right position offset the same way we do
+			// left/right strafing for player input;
+			// first, we will convert the head bob's positon offset into units
+			// of blocks, since it is given in pixels
+			vector2Copy(this.headBobPosOffset, this.headBob.getPosOffset());
+			this.headBobPosOffset.x = pixelsToBlocks(this.headBobPosOffset.x);
+			console.log("head bob offset x is " + this.headBobPosOffset.x);
+
+			// now, we will take into account that amount of horizontal
+			// position bobbing, making sure to apply it in the proper
+			// directions;
+			// remember, we are only accounting for left/right position bobbing
+			// right now
+			const horizBobOffset = this.headBobPosOffset.x;
+			this.headBobPosOffset.x = horizBobOffset * Math.cos(camRot.v -
+					Math.PI / 2);
+			this.headBobPosOffset.y = horizBobOffset * -Math.sin(camRot.v -
+					Math.PI / 2);
+
+			// next, we will apply left/right rotation bobbing to the camera;
+			// this is simpler than the left/right position bobbing
+			vector1Copy(this.headBobAngOffset, this.headBob.getAngOffset());
+			vector1Add(this.headBobAngOffset, this.headBobAngOffset, camRot);
+			camRot = this.headBobAngOffset;
+			camRot.v = camRot.v;
+			console.log("camrot v is " + camRot.v);
+		}
+
 		const mapWidth = this.blockMap.getWidth();
 		const mapHeight = this.blockMap.getHeight();
 		for (let strip = 0; strip < INTERNAL_WIDTH; strip++) {
-			// keep track of our position on the map as we travel along this ray;
+			// keep track of our position on the map as we travel along this
+			// ray;
 			// the ray originates at the camera's position
-			let rayx = camPos.x;
-			let rayy = camPos.y;
+			let rayOriginX = camPos.x;// + this.headBobPosOffset.x;
+			let rayOriginY = camPos.y;// + this.headBobPosOffset.y;
+			let rayx = rayOriginX;
+			let rayy = rayOriginY;
 
 			// calculate the ray's angle with respect to the positive x-axis;
 			// we will treat counter-clockwise rotation as positive;
-			// remember that going "up" is actually in the decreasing y-direction
-			const rayAng = camera.calcRayAng(strip);
+			// remember that going "up" is actually in the decreasing y-direction;
+			// remember to take into account head rotation bobbing
+			const rayAng = camera.calcRayAng(strip);// + this.headBob.getAngOffset();
 
 			// this will hold the block id of the first wall hit by the ray;
 			// 0 means no wall was hit
@@ -233,7 +286,7 @@ Canvas2DRaycaster.prototype.render = function() {
 
 					// we know the ray passes through the camera's position, so
 					// we have enough information to calculate a y-intercept;
-					const rayIntercept = camPos.y - raySlope * camPos.x;
+					const rayIntercept = rayOriginY - raySlope * rayOriginX;
 
 					// now, we can plug in the next horizontal and vertical
 					// lines to find where they intersect with the ray, and
@@ -246,14 +299,14 @@ Canvas2DRaycaster.prototype.render = function() {
 					// make sure to calculate the distance from the
 					// intsersection points to the camera position, not the
 					// origin of the map
-					const nextHorizLineDistX = nextHorizLineX - camPos.x;
-					const nextHorizLineDistY = nextHorizLine - camPos.y;
+					const nextHorizLineDistX = nextHorizLineX - rayOriginX;
+					const nextHorizLineDistY = nextHorizLine - rayOriginY;
 					const nextHorizLineDist = Math.sqrt(nextHorizLineDistX *
 							nextHorizLineDistX + nextHorizLineDistY *
 							nextHorizLineDistY);
 
-					const nextVertLineDistX = nextVertLine - camPos.x;
-					const nextVertLineDistY = nextVertLineY - camPos.y;
+					const nextVertLineDistX = nextVertLine - rayOriginX;
+					const nextVertLineDistY = nextVertLineY - rayOriginY;
 					const nextVertLineDist = Math.sqrt(nextVertLineDistX *
 							nextVertLineDistX + nextVertLineDistY *
 							nextVertLineDistY);
@@ -387,8 +440,8 @@ Canvas2DRaycaster.prototype.render = function() {
 				// we will use the perpendicular distance from the camera
 				// position to the wall that was hit in our calculation of the
 				// strip's height on the screen
-				let trueDistX = Math.abs(camPos.x - rayx);
-				let trueDistY = Math.abs(camPos.y - rayy);
+				let trueDistX = Math.abs(rayOriginX - rayx);
+				let trueDistY = Math.abs(rayOriginY - rayy);
 				let trueDistToWall = Math.sqrt(trueDistX * trueDistX +
 						trueDistY * trueDistY);
 				let relativeRayAng = Math.PI / 2 - Math.abs(rayAng - camRot.v);
@@ -402,9 +455,22 @@ Canvas2DRaycaster.prototype.render = function() {
 				let heightOnScreen = DIST_TO_PLANE * BLOCK_SIZE /
 						perpDistToWall;
 				//heightOnScreen *= BLOCK_SIZE;
+
+				// now, we will take into account the up/down camera bobbing,
+				// by adding the bobbing offset, in pixels, to where we are
+				// considering as the center of the screen;
+				// note that if we are bobbing up, we need to move the center
+				// line of the screen down
+				let bobCenterPosOffset;
+				if (this.headBobPosOffset) {
+					bobCenterPosOffset = -this.headBob.getPosOffset().y;
+				} else {
+					bobCenterPosOffset = 0;
+				}
 			
 				// render the strip
-				const verticalCenter = INTERNAL_HEIGHT / 2;
+				const verticalCenter = INTERNAL_HEIGHT / 2 +
+						bobCenterPosOffset;
 				this.backend.setFillColor(GREEN);
 				if (firstBlockHitId == 2) {
 					this.backend.setFillColor(RED);

@@ -5,12 +5,28 @@ import * as InputBackend from "../../input/backend/InputBackend";
 
 import * as GraphicsBackend from "../../graphics/backend/GraphicsBackend";
 
+import { registerTask, unregisterTask } from "../../task/TaskSystem";
+
 import * as Actor from "../Actor";
 
 import { Vector1 } from "../../physics/Vector1";
 import { Vector2 } from "../../physics/Vector2";
 
+import { HeadBob } from "../../graphics/effect/HeadBob";
+
 import { globalCtxt } from "../../main/GlobalContext";
+
+// head bob effect offset constants, in pixels for positions and radians for
+// angles
+const HEAD_BOB_POS_UP = 4;
+const HEAD_BOB_POS_DOWN = -1;
+const HEAD_BOB_POS_LEFT = -50;
+const HEAD_BOB_POS_RIGHT = 50;
+const HEAD_BOB_ANG_LEFT = 0.0872665;
+const HEAD_BOB_ANG_RIGHT = -0.0872665;
+//const HEAD_BOB_ANG_LEFT = 1;
+//const HEAD_BOB_ANG_RIGHT = -1;
+
 
 export function Player(x, y) {
   this.pos = new Vector2(x, y);
@@ -19,6 +35,18 @@ export function Player(x, y) {
   
   this.inputHandler = new PlayerInputHandler(this);
   this.renderer = new PlayerRenderer(this);
+
+  // create the head bob effect
+  const inputBackend = globalCtxt.inputBackend;
+  this.headBobEffect = new HeadBob(HEAD_BOB_POS_UP, HEAD_BOB_POS_DOWN,
+      HEAD_BOB_POS_LEFT, HEAD_BOB_POS_RIGHT, HEAD_BOB_ANG_LEFT,
+      HEAD_BOB_ANG_RIGHT,
+      () => { return inputBackend.isDown(InputBackend.BTN_UP); },
+      () => { return inputBackend.isDown(InputBackend.BTN_DOWN); },
+      () => { return inputBackend.isDown(InputBackend.BTN_LEFT); },
+      () => { return inputBackend.isDown(InputBackend.BTN_RIGHT); },
+      () => { return inputBackend.isDown(InputBackend.BTN_ROT_LEFT); },
+      () => { return inputBackend.isDown(InputBackend.BTN_ROT_RIGHT); });
 }
 
 /**
@@ -36,6 +64,10 @@ Player.prototype.wire = function() {
   
   const renderer = globalCtxt.renderer;
   renderer.registerOverlay(this.renderer);
+
+  // wire the head bobbing effect
+  registerTask(this.headBobEffect);
+  renderer.setHeadBob(this.headBobEffect);
 	
 	const inputBackend = globalCtxt.inputBackend;
 	inputBackend.registerInputHandler(this.inputHandler);
@@ -54,7 +86,11 @@ Player.prototype.unwire = function() {
 	//graphicsBackend.unregisterRenderer(this.renderer);
   const renderer = globalCtxt.renderer;
   renderer.unregisterOverlay(this.renderer);
-	
+
+  // unwire the head bobbing effect
+  unregisterTask(this.headBobEffect);
+  renderer.setHeadBob(undefined);
+
 	const inputBackend = globalCtxt.inputBackend;
 	inputBackend.unregisterInputHandler(this.inputHandler);
 };
