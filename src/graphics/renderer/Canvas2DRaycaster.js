@@ -192,7 +192,8 @@ Canvas2DRaycaster.prototype.render = function() {
 			
 			// keep track of what side of a wall he hit closest;
 			let sideOfWall;
-			while (blocksTraveledX < VISIBILITY && blocksTraveledY < VISIBILITY) {
+			//while (blocksTraveledX < VISIBILITY && blocksTraveledY < VISIBILITY) {
+			while (Math.sqrt(blocksTraveledX * blocksTraveledX + blocksTraveledY * blocksTraveledY) < VISIBILITY) {
 				// the grid lines to take the next wall query at
 				let nextHorizLine = rayy;
 				let nextVertLine = rayx;
@@ -250,11 +251,6 @@ Canvas2DRaycaster.prototype.render = function() {
 						}
 					}
 				}
-
-				// update the distance traveled in the horizontal and vertical
-				// directions
-				blocksTraveledX += Math.abs(nextHorizLine - rayx);
-				blocksTraveledY += Math.abs(nextVertLine - rayy);
 
 				// compute the intersections of the ray with the next
 				// horizontal and vertical lines;
@@ -332,6 +328,11 @@ Canvas2DRaycaster.prototype.render = function() {
 						}
 					}
 				}
+
+				// update the distance traveled in the horizontal and vertical
+				// directions
+				blocksTraveledX = Math.abs(rayx - rayOriginX);
+				blocksTraveledY = Math.abs(rayy - rayOriginY);
 
 				// make sure we are still on the map
 				/*if (rayx < 0 || rayx > mapWidth - 1 || rayy < 0 ||
