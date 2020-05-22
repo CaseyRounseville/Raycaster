@@ -30,8 +30,8 @@ const POS_BOB_RIGHT_FRAMES = 15;
 
 // how many frames it takes to go from wherever the current angle offset is to
 // the max left and right angle offsets
-const ANG_BOB_LEFT_FRAMES = 15;
-const ANG_BOB_RIGHT_FRAMES = 15;
+const ANG_BOB_LEFT_FRAMES = 30;
+const ANG_BOB_RIGHT_FRAMES = 30;
 
 // tolerance for when the position and angle offsets are close enough to
 // neutral, in pixels and radians respectively
@@ -188,6 +188,11 @@ HeadBob.prototype.tick = function() {
         this.currAngBobLeftFrame = 0;
         this.currAngBobRightFrame = 0;
 
+        // reset which directions we are bobbing in
+        this.posBobbingUp = true;
+        this.posBobbingLeft = true;
+        this.angBobbingLeft = true;
+
         // only interpolate toward the neutral position and angle if we are not
         // already there
         if (this.currRetNeutralFrame < RET_NEUTRAL_FRAMES) {
@@ -208,11 +213,6 @@ HeadBob.prototype.tick = function() {
         // we are moving;
         // reset the return to neutral animation frame counter
         this.currRetNeutralFrame = 0;
-
-        // just in case this is the last frame we are moving, we must update
-        // the starting position and angle offsets for the return to neutral
-        vector2Copy(this.retNeutralMaxPosOffset, this.currPosOffset);
-        vector1Copy(this.retNeutralMaxAngOffset, this.currAngOffset);
 
         // now, handle the bobbing for forward and backward movement
         if (movingForward || movingBackward) {
@@ -326,7 +326,7 @@ HeadBob.prototype.tick = function() {
                 // sinusoidally interpolate the current position offset, in the
                 // rightward direction
                 this.currPosOffset.x = intSinVal(this.posBobRightStartOffset,
-                    this.posBobUp, POS_BOB_UP_FRAMES,
+                    this.posBobRight, POS_BOB_RIGHT_FRAMES,
                     this.currPosBobRightFrame);
 
                 // increment the bob right frame, and switch to bobbing left if
@@ -347,6 +347,57 @@ HeadBob.prototype.tick = function() {
                 this.currRightFrame++;
             }
         }
+
+        // we will handle angle bobbing the same, regardless of the direction
+        // of movement
+        if (this.angBobbingLeft) {
+            // if we have just started bobbing left, we need to record the
+            // current angle offset, which we will be using as the starting
+            // angle offset for our interpolations
+            if (this.currAngBobLeftFrame == 0) {
+                this.angBobLeftStartOffset = this.currAngOffset.v;
+            }
+
+            // sinusoidally interpolate the current angle offset, in the
+            // leftward direction
+            this.currAngOffset.v = intSinVal(this.angBobLeftStartOffset,
+                    this.angBobLeft, ANG_BOB_LEFT_FRAMES,
+                    this.currAngBobLeftFrame);
+
+            // increment the bob left frame, and switch to bobbing right if we
+            // have bobbed all the way left
+            this.currAngBobLeftFrame++;
+            if (this.currAngBobLeftFrame == ANG_BOB_LEFT_FRAMES) {
+                this.currAngBobLeftFrame = 0;
+                this.angBobbingLeft = false;
+            }
+        } else {
+            // if we have just started bobbing right, we need to record the
+            // current angle offset, which we will be using as the starting
+            // angle offset for our interpolations
+            if (this.currAngBobRightFrame == 0) {
+                this.angBobRightStartOffset = this.currAngOffset.v;
+            }
+
+            // sinusoidally interpolate the current angle offset, in the
+            // rightward direction
+            this.currAngOffset.v = intSinVal(this.angBobRightStartOffset,
+                this.angBobRight, ANG_BOB_RIGHT_FRAMES,
+                this.currAngBobRightFrame);
+
+            // increment the bob right frame, and switch to bobbing left if we
+            // have bobbed all the way right
+            this.currAngBobRightFrame++;
+            if (this.currAngBobRightFrame == ANG_BOB_RIGHT_FRAMES) {
+                this.currAngBobRightFrame = 0;
+                this.angBobbingLeft = true;
+            }
+        }
+
+        // just in case this is the last frame we are moving, we must update
+        // the starting position and angle offsets for the return to neutral
+        vector2Copy(this.retNeutralMaxPosOffset, this.currPosOffset);
+        vector1Copy(this.retNeutralMaxAngOffset, this.currAngOffset);
     }
 
     // head bobbing task does not terminate on its own

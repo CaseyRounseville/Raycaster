@@ -20,10 +20,10 @@ import { globalCtxt } from "../../main/GlobalContext";
 // angles
 const HEAD_BOB_POS_UP = 4;
 const HEAD_BOB_POS_DOWN = -1;
-const HEAD_BOB_POS_LEFT = -50;
-const HEAD_BOB_POS_RIGHT = 50;
-const HEAD_BOB_ANG_LEFT = 0.0872665;
-const HEAD_BOB_ANG_RIGHT = -0.0872665;
+const HEAD_BOB_POS_LEFT = -2;
+const HEAD_BOB_POS_RIGHT = 2;
+const HEAD_BOB_ANG_LEFT = 0.0872665 / 3;
+const HEAD_BOB_ANG_RIGHT = -0.0872665 / 3;
 //const HEAD_BOB_ANG_LEFT = 1;
 //const HEAD_BOB_ANG_RIGHT = -1;
 

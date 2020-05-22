@@ -150,7 +150,7 @@ Canvas2DRaycaster.prototype.render = function() {
 			vector1Copy(this.headBobAngOffset, this.headBob.getAngOffset());
 			vector1Add(this.headBobAngOffset, this.headBobAngOffset, camRot);
 			camRot = this.headBobAngOffset;
-			camRot.v = camRot.v;
+			camRot.v = wrapFull(camRot.v);
 			console.log("camrot v is " + camRot.v);
 		}
 
@@ -169,7 +169,7 @@ Canvas2DRaycaster.prototype.render = function() {
 			// we will treat counter-clockwise rotation as positive;
 			// remember that going "up" is actually in the decreasing y-direction;
 			// remember to take into account head rotation bobbing
-			const rayAng = camera.calcRayAng(strip);// + this.headBob.getAngOffset();
+			const rayAng = wrapFull(camera.calcRayAng(strip) + this.headBob.getAngOffset().v);
 
 			// this will hold the block id of the first wall hit by the ray;
 			// 0 means no wall was hit
@@ -463,7 +463,11 @@ Canvas2DRaycaster.prototype.render = function() {
 				// line of the screen down
 				let bobCenterPosOffset;
 				if (this.headBobPosOffset) {
-					bobCenterPosOffset = -this.headBob.getPosOffset().y;
+					// remember that on-screen y-coordinate decreases as we go
+					// upward, and increases as we go downward, but the headbob
+					// offset is defined as opposite(positive offset means head
+					// goes up)
+					bobCenterPosOffset = this.headBob.getPosOffset().y;
 				} else {
 					bobCenterPosOffset = 0;
 				}
