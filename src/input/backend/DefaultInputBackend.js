@@ -61,4 +61,29 @@ export function DefaultInputBackend() {
 		const btn = keyToBtn[key];
 		this.release(btn);
 	};
+
+	// listen for mouse movements
+	/*document.onmousemove = (event) => {
+		// if the magnitude of the movement was small, turn off rotation
+		if (Math.abs(event.offsetX) < 3) {
+			this.release(BTN_ROT_LEFT);
+			this.release(BTN_ROT_RIGHT);
+			return;
+		}
+
+		// determine if we should rotate left or right
+		if (event.offsetX < 0) {
+			this.release(BTN_ROT_RIGHT);
+			this.press(BTN_ROT_LEFT);
+		} else if (event.offsetX > 0) {
+			this.release(BTN_ROT_LEFT);
+			this.press(BTN_ROT_RIGHT);
+		}
+	};
+
+	// turn off rotation if the mouse leaves the document
+	document.onmouseleave = (event) => {
+			this.release(BTN_ROT_LEFT);
+			this.release(BTN_ROT_RIGHT);
+	};*/
 }

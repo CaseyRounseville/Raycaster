@@ -11,8 +11,9 @@
   }
 };*/
 
-export function Dialog(html) {
-  this.html = html;
-  this.selectedOption = 0;
-  this.active = true;
+export function Dialog() {
+  this.html = "";
+  this.buttons = [];
 }
+
+

@@ -9,6 +9,10 @@ import { Player } from "../actor/player/Player";
 
 import { changeScene } from "../scene/SceneChanger";
 
+import { showDialog } from "../ui/DialogSystem";
+import { SceneSelectDialog } from "../ui/SceneSelectDialog";
+import { IntroDialog } from "../ui/teststory/IntroDialog";
+
 // set up global ctxt as a singleton
 const globalCtxtStr = `{
 	"graphicsBackendName":	"canvas2D",
@@ -37,6 +41,8 @@ globalCtxt.player = player;
 
 // set up scene(title screen maybe)
 changeScene("scene-0", "scene-0");
+
+showDialog(new IntroDialog());
 
 const loop = () => {
 	inputBackend.process();
