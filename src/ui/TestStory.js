@@ -9,7 +9,9 @@ import { changeScene } from "../scene/SceneChanger";
  */
 export const createIntroDialog = () => {
     const dialog = new Dialog();
-    dialog.html = "This is the introduction of a story.";
+    dialog.html = "This is the introduction of a story. This is some text " +
+            "to makethisdiadiadiaidadialog really long, so that the text wraps around " +
+            "to the next line.";
 
     const btnOk = document.createElement("button");
     btnOk.innerHTML = "Ok";
