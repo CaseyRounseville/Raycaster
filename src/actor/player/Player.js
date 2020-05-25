@@ -18,12 +18,12 @@ import { globalCtxt } from "../../main/GlobalContext";
 
 // head bob effect offset constants, in pixels for positions and radians for
 // angles
-const HEAD_BOB_POS_UP = 4;
+const HEAD_BOB_POS_UP = 2;
 const HEAD_BOB_POS_DOWN = -1;
-const HEAD_BOB_POS_LEFT = -2;
-const HEAD_BOB_POS_RIGHT = 2;
-const HEAD_BOB_ANG_LEFT = 0.0872665 / 3;
-const HEAD_BOB_ANG_RIGHT = -0.0872665 / 3;
+const HEAD_BOB_POS_LEFT = -1;
+const HEAD_BOB_POS_RIGHT = 1;
+const HEAD_BOB_ANG_LEFT = 0.0872665 / 5;
+const HEAD_BOB_ANG_RIGHT = -0.0872665 / 5;
 //const HEAD_BOB_ANG_LEFT = 1;
 //const HEAD_BOB_ANG_RIGHT = -1;
 

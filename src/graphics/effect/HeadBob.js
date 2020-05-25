@@ -19,19 +19,19 @@ import {
 } from "../../physics/Interpolation";
 
 // how many frames to spend returning to neutral
-const RET_NEUTRAL_FRAMES = 15;
+const RET_NEUTRAL_FRAMES = 13;
 
 // how many frames it takes to go from wherever the current position offset is
 // to the max up, down, left, and right position offsets
-const POS_BOB_UP_FRAMES = 15;
-const POS_BOB_DOWN_FRAMES = 15;
-const POS_BOB_LEFT_FRAMES = 15;
-const POS_BOB_RIGHT_FRAMES = 15;
+const POS_BOB_UP_FRAMES = 13;
+const POS_BOB_DOWN_FRAMES = 13;
+const POS_BOB_LEFT_FRAMES = 13;
+const POS_BOB_RIGHT_FRAMES = 13;
 
 // how many frames it takes to go from wherever the current angle offset is to
 // the max left and right angle offsets
-const ANG_BOB_LEFT_FRAMES = 30;
-const ANG_BOB_RIGHT_FRAMES = 30;
+const ANG_BOB_LEFT_FRAMES = 26;
+const ANG_BOB_RIGHT_FRAMES = 26;
 
 // tolerance for when the position and angle offsets are close enough to
 // neutral, in pixels and radians respectively
