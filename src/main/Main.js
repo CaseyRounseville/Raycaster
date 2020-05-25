@@ -11,7 +11,7 @@ import { changeScene } from "../scene/SceneChanger";
 
 import { showDialog } from "../ui/DialogSystem";
 import { SceneSelectDialog } from "../ui/SceneSelectDialog";
-import { IntroDialog } from "../ui/teststory/IntroDialog";
+import { createIntroDialog } from "../ui/TestStory";
 
 // set up global ctxt as a singleton
 const globalCtxtStr = `{
@@ -42,7 +42,7 @@ globalCtxt.player = player;
 // set up scene(title screen maybe)
 changeScene("scene-0", "scene-0");
 
-showDialog(new IntroDialog());
+showDialog(createIntroDialog());
 
 const loop = () => {
 	inputBackend.process();
