@@ -295,23 +295,31 @@ Canvas2DRaycaster.prototype.render = function() {
 
 					// make sure to calculate the distance from the
 					// intsersection points to the camera position, not the
-					// origin of the map
+					// origin of the map;
+					// we will compare the squares of these distances to avoid
+					// performing a square root
 					const nextHorizLineDistX = nextHorizLineX - rayOriginX;
 					const nextHorizLineDistY = nextHorizLine - rayOriginY;
-					const nextHorizLineDist = Math.sqrt(nextHorizLineDistX *
+					//const nextHorizLineDist = Math.sqrt(nextHorizLineDistX *
+					//		nextHorizLineDistX + nextHorizLineDistY *
+					//		nextHorizLineDistY);
+					const nextHorizLineDistSquared = nextHorizLineDistX *
 							nextHorizLineDistX + nextHorizLineDistY *
-							nextHorizLineDistY);
+							nextHorizLineDistY;
 
 					const nextVertLineDistX = nextVertLine - rayOriginX;
 					const nextVertLineDistY = nextVertLineY - rayOriginY;
-					const nextVertLineDist = Math.sqrt(nextVertLineDistX *
+					//const nextVertLineDist = Math.sqrt(nextVertLineDistX *
+					//		nextVertLineDistX + nextVertLineDistY *
+					//		nextVertLineDistY);
+					const nextVertLineDistSquared = nextVertLineDistX *
 							nextVertLineDistX + nextVertLineDistY *
-							nextVertLineDistY);
+							nextVertLineDistY;
 
 					// if the distances are equal, we have found a corner;
 					// in this case, we will arbitrarily choose the horizontal
 					// line instersection
-					if (nextHorizLineDist <= nextVertLineDist) {
+					if (nextHorizLineDistSquared <= nextVertLineDistSquared) {
 						rayx = nextHorizLineX;
 						rayy = nextHorizLine;
 						if (rayAng > 0 && rayAng < Math.PI) {
