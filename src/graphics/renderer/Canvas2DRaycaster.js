@@ -132,7 +132,7 @@ Canvas2DRaycaster.prototype.render = function() {
 			// of blocks, since it is given in pixels
 			vector2Copy(this.headBobPosOffset, this.headBob.getPosOffset());
 			this.headBobPosOffset.x = pixelsToBlocks(this.headBobPosOffset.x);
-			console.log("head bob offset x is " + this.headBobPosOffset.x);
+			//console.log("head bob offset x is " + this.headBobPosOffset.x);
 
 			// now, we will take into account that amount of horizontal
 			// position bobbing, making sure to apply it in the proper
@@ -151,7 +151,7 @@ Canvas2DRaycaster.prototype.render = function() {
 			vector1Add(this.headBobAngOffset, this.headBobAngOffset, camRot);
 			camRot = this.headBobAngOffset;
 			camRot.v = wrapFull(camRot.v);
-			console.log("camrot v is " + camRot.v);
+			//console.log("camrot v is " + camRot.v);
 		}
 
 		const mapWidth = this.blockMap.getWidth();
@@ -193,7 +193,8 @@ Canvas2DRaycaster.prototype.render = function() {
 			// keep track of what side of a wall he hit closest;
 			let sideOfWall;
 			//while (blocksTraveledX < VISIBILITY && blocksTraveledY < VISIBILITY) {
-			while (Math.sqrt(blocksTraveledX * blocksTraveledX + blocksTraveledY * blocksTraveledY) < VISIBILITY) {
+			//while (Math.sqrt(blocksTraveledX * blocksTraveledX + blocksTraveledY * blocksTraveledY) < VISIBILITY) {
+			while (blocksTraveledX + blocksTraveledY < VISIBILITY) {
 				// the grid lines to take the next wall query at
 				let nextHorizLine = rayy;
 				let nextVertLine = rayx;

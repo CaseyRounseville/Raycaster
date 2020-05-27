@@ -6,7 +6,7 @@ import { Vector4 } from "../Vector4";
 
 import { Mesh } from "../../graphics/mesh/Mesh";
 import { Vertex } from "../../graphics/mesh/Vertex";
-import { DebugBlockMapRenderer } from "./DebugBlockMapRenderer";
+import { MiniMapRenderer } from "./MiniMapRenderer";
 
 export function BlockMap(width, height, texSheet, northData, southData,
 		eastData, westData, flatData, heightData, collData) {
@@ -20,20 +20,20 @@ export function BlockMap(width, height, texSheet, northData, southData,
 	this.flatData = flatData;
 	this.heightData = heightData;
 	this.collData = collData;
-	this.renderer = new DebugBlockMapRenderer(this);
+	this.renderer = new MiniMapRenderer(this);
 }
 
 BlockMap.prototype.wire = function() {
 	console.log("wiring block map");
 	let globalRenderer = globalCtxt.renderer;
 	globalRenderer.registerBlockMap(this);
-	//globalRenderer.registerOverlay(this.renderer);
+	globalRenderer.registerOverlay(this.renderer);
 };
 
 BlockMap.prototype.unwire = function() {
 	let globalRenderer = globalCtxt.renderer;
 	globalRenderer.registerBlockMap(undefined);
-	//globalRenderer.unregisterOverlay(this.renderer);
+	globalRenderer.unregisterOverlay(this.renderer);
 };
 
 /*

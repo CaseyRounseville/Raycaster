@@ -1,0 +1,9 @@
+{
+	"textures": [
+		{ "id": "player-left-hand", "file": "left-hand.png" },
+		{ "id": "player-right-hand", "file": "right-hand.png" }
+	],
+	"scenes": [
+
+	]
+}

@@ -29,12 +29,14 @@ const graphicsBackend = globalCtxt.graphicsBackend;
 const renderer = globalCtxt.renderer;
 const inputBackend = globalCtxt.inputBackend;
 const physicsBackend = globalCtxt.physicsBackend;
+const resourceBackend = globalCtxt.resourceBackend;
 
 // set up input handler
-const testInputHandler = new TestInputHandler();
-inputBackend.registerInputHandler(testInputHandler);
+//const testInputHandler = new TestInputHandler();
+//inputBackend.registerInputHandler(testInputHandler);
 
 // set up player
+resourceBackend.loadResource("player");
 const player = new Player(0, 0);
 player.wire();
 globalCtxt.player = player;
