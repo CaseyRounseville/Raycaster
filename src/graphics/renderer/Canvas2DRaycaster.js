@@ -43,10 +43,10 @@ Canvas2DRaycaster.prototype.constructor = Canvas2DRaycaster;
 
 export function Canvas2DRaycaster(backend) {
 	Renderer.call(this);
-	
+
 	this.backend = backend;
-	
-	
+
+
 };
 
 Canvas2DRaycaster.prototype.setSkyBox = function(skyBox) {
@@ -76,7 +76,7 @@ Canvas2DRaycaster.prototype.unregisterOverlay = function(overlay) {
 Canvas2DRaycaster.prototype.render = function() {
 	// clear the screen
 	this.backend.clearScreen();
-	
+
 	// render skyBox
 	if (this.skyBox) {
 		// we may need to render the skybox in two parts, depending on if we
@@ -113,7 +113,7 @@ Canvas2DRaycaster.prototype.render = function() {
 	// render floor
 	this.backend.setFillColor(GRAY);
 	this.backend.fillRect(0, INTERNAL_HEIGHT / 2, INTERNAL_WIDTH, INTERNAL_HEIGHT / 2);
-	
+
 	// only render the blockmap if it exists
 	if (this.blockMap) {
 		// render blockMap and billboards(need to do them at the same time);
@@ -189,7 +189,7 @@ Canvas2DRaycaster.prototype.render = function() {
 			// either direction
 			let blocksTraveledX = 0;
 			let blocksTraveledY = 0;
-			
+
 			// keep track of what side of a wall he hit closest;
 			let sideOfWall;
 			//while (blocksTraveledX < VISIBILITY && blocksTraveledY < VISIBILITY) {
@@ -449,13 +449,17 @@ Canvas2DRaycaster.prototype.render = function() {
 			if (firstBlockHitId > 0) {
 				// we will use the perpendicular distance from the camera
 				// position to the wall that was hit in our calculation of the
-				// strip's height on the screen
+				// strip's height on the screen;
+				// we will use a pre-computed value stored in a table in the
+				// camera for the sine operation
 				let trueDistX = Math.abs(rayOriginX - rayx);
 				let trueDistY = Math.abs(rayOriginY - rayy);
 				let trueDistToWall = Math.sqrt(trueDistX * trueDistX +
 						trueDistY * trueDistY);
-				let relativeRayAng = Math.PI / 2 - Math.abs(rayAng - camRot.v);
-				let perpDistToWall = trueDistToWall * Math.sin(relativeRayAng);
+				//let relativeRayAng = Math.PI / 2 - Math.abs(rayAng - camRot.v);
+				//let perpDistToWall = trueDistToWall * Math.sin(relativeRayAng);
+				let perpDistToWall = trueDistToWall *
+						camera.cosRelativeRayAng(strip);
 
 				// we will assume every wall is exactly the same height(the
 				// BLOCK_SIZE), and that the camera is exactly halfway above
@@ -481,7 +485,7 @@ Canvas2DRaycaster.prototype.render = function() {
 				} else {
 					bobCenterPosOffset = 0;
 				}
-			
+
 				// render the strip
 				const verticalCenter = INTERNAL_HEIGHT / 2 +
 						bobCenterPosOffset;
@@ -532,7 +536,7 @@ Canvas2DRaycaster.prototype.render = function() {
 			}
 		}
 	}
-	
+
 	// render all the overlays
 	for (let i = 0; i < this.overlays.length; i++) {
 		let overlay = this.overlays[i];
