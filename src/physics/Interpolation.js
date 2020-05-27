@@ -1,4 +1,35 @@
 /**
+ * Generate a mapping of integer inputs to outputs of the given function. This
+ * can be used for computationally expensive functions which we know that the
+ * inputs will always be in a fixed range, and we want to avoid recalculating
+ * the value of the function frequently.
+ * 
+ * Parameters:
+ * fn -- The function we want to tabulate.
+ * startInput -- The smallest input in the range of integer inputs, inclusive.
+ * endInput -- The largest input in the range of integer inputs, inclusive.
+ * 
+ * Returns:
+ * An array containing the tabulated values. The value in index 0 corresponds
+ * to the value of the function when called using startInput, and the value in
+ * index (endInput - startInput), which is one less than the size of the range
+ * of inputs, corresponds to the value of the function when called using
+ * endInput.
+ */
+export const tabulateFunction = (fn, startInput, endInput) => {
+    // create the table, initially just an empty array
+    const intTable = [];
+
+    // fill up the table with all inputs from the input range, in order from
+    // smallest to largest
+    for (let input = startInput; input <= endInput; input++) {
+        intTable.push(fn(input));
+    }
+
+    return intTable;
+};
+
+/**
  * Linearly interpolate between the start and end values inclusive, over the
  * given number of steps(frames), giving the next value based on what step we
  * are on(the currStep).
