@@ -5,7 +5,9 @@ import { INTERNAL_WIDTH } from "./backend/GraphicsBackend";
 
 import * as Angle from "../physics/Angle";
 
-import * as Block from "../physics/block/Block";
+import { pixelsToBlocks } from "../physics/block/Block";
+
+import { tabulateFunction } from "../physics/Interpolation";
 
 // the visibility, in blocks, in the x and y directions
 export const VISIBILITY = 50;
@@ -17,13 +19,28 @@ export const FOV = Math.PI / 2;
 // blocks
 // export const DIST_TO_PLANE = Block.pixelsToBlocks(INTERNAL_WIDTH / 2) /
 // Math.sin(FOV / 2);
-export const DIST_TO_PLANE = Block.pixelsToBlocks(320 / 2) / Math.tan(FOV / 2);
+export const DIST_TO_PLANE = pixelsToBlocks(320 / 2) / Math.tan(FOV / 2);
 
 export function Camera() {
 	this.pos = new Vector2(0, 0);
 	this.rot = new Vector1(0);
 	this.height = new Vector1(0.5);
 	this.depthBuffer = [];
+
+	// generate a tabulation of the atan2 function for use in calcRayAng, to
+	// avoid calculating arctan in hot loops
+	this.rayAngTable = tabulateFunction((strip) => {
+		// take the signed distance between the strip index and the horizontal
+		// center of the screen plane
+		let x = pixelsToBlocks(INTERNAL_WIDTH / 2 - strip);
+
+		// calculate the angle that the ray makes with respect to the line
+		// perpendicular to the screen plane, passing through its center
+		let ang = Math.atan2(x, DIST_TO_PLANE);
+
+		// return that angle
+		return ang;
+	}, 0, INTERNAL_WIDTH - 1);
 };
 
 /**
@@ -118,13 +135,10 @@ Camera.prototype.bindHeight = function(height) {
  * between 0 degrees inclusive and 360 degrees exclusive.
  */
 Camera.prototype.calcRayAng = function(strip) {
-	// take the signed distance between the strip index and the horizontal
-	// center of the screen plane
-	let x = Block.pixelsToBlocks(INTERNAL_WIDTH / 2 - strip);
-
-	// calculate the angle that the ray makes with respect to the line
-	// perpendicular to the screen plane, passing through its center
-	let ang = Math.atan2(x, DIST_TO_PLANE);
+	// pull from the table the angle that the ray through the given strip makes
+	// with respect to the line perpendicular to the screen plane, passing
+	// through its center
+	const ang = this.rayAngTable[strip];
 
 	// now, add in the camera's rotation
 	return Angle.wrapFull(ang + this.rot.v);
