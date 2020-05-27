@@ -1,5 +1,25 @@
+import { tabulateFunction } from "./Interpolation";
+
 const TWO_PI = 2 * Math.PI;
 const HALF_PI = 0.25 * Math.PI;
+
+// sine table, indexed by integer degrees wrapped between 0 degrees inclusive
+// and 360 degrees exclusive
+export const sinTable = tabulateFunction((deg) => {
+	return Math.sin(deg * Math.PI / 180.0);
+}, 0, 359);
+
+// cosine table, indexed by integer degrees wrapped between 0 degrees inclusive
+// and 360 degrees exclusive
+export const cosTable = tabulateFunction((deg) => {
+	return Math.cos(deg * Math.PI / 180.0);
+}, 0, 359);
+
+// tangent table, indexed by integer degrees wrapped between 0 degrees
+// inclusive and 360 degrees exclusive
+export const tanTable = tabulateFunction((deg) => {
+	return Math.tan(deg * Math.PI / 180.0);
+}, 0, 359);
 
 /**
  * Convert degrees to radians.
