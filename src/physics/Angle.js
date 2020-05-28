@@ -31,7 +31,7 @@ export const tanTable = tabulateFunction((deg) => {
  * The given amount of degrees, converted to radians.
  */
 export const degToRad = (deg) => {
-	return deg * 180.0 / Math.PI;
+	return deg * Math.PI / 180.0;
 };
 
 /**
@@ -44,7 +44,7 @@ export const degToRad = (deg) => {
  * The given amount to radians, converted to degrees.
  */
 export const radToDeg = (rad) => {
-	return rad * Math.PI / 180.0;
+	return rad * 180.0 / Math.PI;
 };
 
 /**
