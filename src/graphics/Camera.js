@@ -3,7 +3,11 @@ import { Vector2 } from "../physics/Vector2";
 
 import { INTERNAL_WIDTH } from "./backend/GraphicsBackend";
 
-import * as Angle from "../physics/Angle";
+import {
+	radToDeg,
+	degToRad,
+	wrapFullDeg
+} from "../physics/Angle";
 
 import { pixelsToBlocks } from "../physics/block/Block";
 
@@ -12,14 +16,15 @@ import { tabulateFunction } from "../physics/Interpolation";
 // the visibility, in blocks, in the x and y directions
 export const VISIBILITY = 50;
 
-// the field of view of the camera, in radians
-export const FOV = Math.PI / 2;
+// the field of view of the camera, in degrees
+export const FOV = 90;
 
 // the perpendicular distance bewtween the camera and the screen plane, in
 // blocks
 // export const DIST_TO_PLANE = Block.pixelsToBlocks(INTERNAL_WIDTH / 2) /
 // Math.sin(FOV / 2);
-export const DIST_TO_PLANE = pixelsToBlocks(320 / 2) / Math.tan(FOV / 2);
+export const DIST_TO_PLANE = pixelsToBlocks(320 / 2) /
+		Math.tan(degToRad(FOV / 2));
 
 export function Camera() {
 	this.pos = new Vector2(0, 0);
@@ -28,15 +33,19 @@ export function Camera() {
 	this.depthBuffer = [];
 
 	// generate a tabulation of the atan2 function for use in calcRayAng, to
-	// avoid calculating arctan in hot loops
+	// avoid calculating arctan in hot loops;
+	// the angles stored in this table are in units of degrees
 	this.relativeRayAngTable = tabulateFunction((strip) => {
 		// take the signed distance between the strip index and the horizontal
 		// center of the screen plane
 		let x = pixelsToBlocks(INTERNAL_WIDTH / 2 - strip);
 
 		// calculate the angle that the ray makes with respect to the line
-		// perpendicular to the screen plane, passing through its center
-		let ang = Math.atan2(x, DIST_TO_PLANE);
+		// perpendicular to the screen plane, passing through its center;
+		// make sure to convert to degrees, and remember to wrap the angle
+		// between 0 inclusive and 360 exclusive, since the range of atan2 is
+		// -pi / 2 inclusive to pi / 2 inclusive.
+		let ang = wrapFullDeg(radToDeg(Math.atan2(x, DIST_TO_PLANE)));
 
 		// return that angle
 		return ang;
@@ -48,8 +57,23 @@ export function Camera() {
 	// perpendicular distance of a wall from the camera instead of the actual
 	// euclidean distance
 	this.relativeRayAngCosTable = tabulateFunction((strip) => {
-		return Math.cos(this.relativeRayAngTable[strip]);
+		// careful, the relative ray angle table stores the angles in degrees,
+		// so a conversion to radians is needed
+		return Math.cos(degToRad(this.relativeRayAngTable[strip]));
 	}, 0, INTERNAL_WIDTH - 1);
+
+	// generate a tabulation of the tangents of the ray angles;
+	// this is a two-dimensional tabulation, with the outer table indexed by
+	// the integer-degree direction the camera is facing, and the inner table
+	// indexed by the strip number
+	this.rayAngTanTable = tabulateFunction((deg) => {
+		return tabulateFunction((strip) => {
+			// take the tangent of the sum of the camera direction and the
+			// relative ray angle of the ray which goes through the current
+			// strip
+			return Math.tan(degToRad(deg + this.relativeRayAngTable[strip]));
+		}, 0, INTERNAL_WIDTH - 1);
+	}, 0, 359);
 };
 
 /**
@@ -67,14 +91,14 @@ Camera.prototype.getPos = function() {
 };
 
 /**
- * Return this camera's rotation, in radians. Changes to the rotation vector
+ * Return this camera's rotation, in degrees. Changes to the rotation vector
  * returned by this function will be reflected in this camera.
  *
  * Parameters:
  * None.
  *
  * Returns:
- * This camera's rotation vector, in radians.
+ * This camera's rotation vector, in degrees.
  */
 Camera.prototype.getRot = function() {
 	return this.rot;
@@ -104,11 +128,11 @@ Camera.prototype.bindPos = function(pos) {
 
 
 /**
- * Bind the given rotation vector to this camera, in radians. Changes to the
+ * Bind the given rotation vector to this camera, in degrees. Changes to the
  * rotation vector will be reflected in this camera.
  *
  * Parameters:
- * rot -- The rotation to bind to this camera, in radians.
+ * rot -- The rotation to bind to this camera, in degrees.
  *
  * Returns:
  * Nothing.
@@ -150,7 +174,7 @@ Camera.prototype.calcRayAng = function(strip) {
 	const ang = this.relativeRayAngTable[strip];
 
 	// now, add in the camera's rotation
-	return Angle.wrapFull(ang + this.rot.v);
+	return wrapFullDeg(ang + this.rot.v);
 };
 
 /**

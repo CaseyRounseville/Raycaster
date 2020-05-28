@@ -32,7 +32,7 @@ export function Player(x, y) {
   this.pos = new Vector2(x, y);
   this.vel = new Vector2(0, 0);
   this.rot = new Vector1(0);
-  
+
   this.inputHandler = new PlayerInputHandler(this);
   this.renderer = new PlayerRenderer(this);
 
@@ -54,24 +54,24 @@ export function Player(x, y) {
  */
 Player.prototype.wire = function() {
   alert("wiring player");
-  
+
   // bind the player's movements to the camera
   const graphicsBackend = globalCtxt.graphicsBackend;
   const cam = graphicsBackend.getCamera();
   cam.bindPos(this.pos);
   cam.bindRot(this.rot);
   //graphicsBackend.registerRenderer(this.renderer);
-  
+
   const renderer = globalCtxt.renderer;
   renderer.registerOverlay(this.renderer);
 
   // wire the head bobbing effect
   registerTask(this.headBobEffect);
   renderer.setHeadBob(this.headBobEffect);
-	
+
 	const inputBackend = globalCtxt.inputBackend;
 	inputBackend.registerInputHandler(this.inputHandler);
-  
+
   const resourceBackend = globalCtxt.resourceBackend;
   resourceBackend.loadResource("test");
 };
@@ -81,7 +81,7 @@ Player.prototype.wire = function() {
  */
 Player.prototype.unwire = function() {
   alert("unwiring player");
-  
+
   //const graphicsBackend = globalCtxt.graphicsBackend;
 	//graphicsBackend.unregisterRenderer(this.renderer);
   const renderer = globalCtxt.renderer;

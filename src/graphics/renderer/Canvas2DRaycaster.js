@@ -24,9 +24,16 @@ import {
 	copy as vector2Copy
 } from "../../physics/Vector2";
 
-import { wrapFull } from "../../physics/Angle"
+import {
+	sinTable,
+	cosTable,
+	tanTable,
+	degToRad,
+	radToDeg,
+	wrapFullDeg
+} from "../../physics/Angle"
 
-// the tolerance of the ray's angle during raycasting calculations, in radians
+// the tolerance of the ray's angle during raycasting calculations, in degrees
 const RAY_ANG_TOL = 0.00001;
 
 const SIDE_NORTH = 0;
@@ -140,18 +147,20 @@ Canvas2DRaycaster.prototype.render = function() {
 			// remember, we are only accounting for left/right position bobbing
 			// right now
 			const horizBobOffset = this.headBobPosOffset.x;
-			this.headBobPosOffset.x = horizBobOffset * Math.cos(camRot.v -
-					Math.PI / 2);
-			this.headBobPosOffset.y = horizBobOffset * -Math.sin(camRot.v -
-					Math.PI / 2);
+			this.headBobPosOffset.x = horizBobOffset *
+					cosTable[wrapFullDeg(camRot.v -	90)];
+			//console.log("headbob pos x is " + this.headBobPosOffset.x + ", cam rot v is " + camRot.v);
+			this.headBobPosOffset.y = horizBobOffset *
+					-sinTable[wrapFullDeg(camRot.v - 90)];
 
 			// next, we will apply left/right rotation bobbing to the camera;
 			// this is simpler than the left/right position bobbing
-			vector1Copy(this.headBobAngOffset, this.headBob.getAngOffset());
+/*			vector1Copy(this.headBobAngOffset, this.headBob.getAngOffset());
+			this.headBobAngOffset.v = radToDeg(this.headBobAngOffset.v);
 			vector1Add(this.headBobAngOffset, this.headBobAngOffset, camRot);
 			camRot = this.headBobAngOffset;
-			camRot.v = wrapFull(camRot.v);
-			//console.log("camrot v is " + camRot.v);
+			camRot.v = wrapFullDeg(camRot.v);
+			console.log("camrot v is " + camRot.v);*/
 		}
 
 		const mapWidth = this.blockMap.getWidth();
@@ -160,29 +169,40 @@ Canvas2DRaycaster.prototype.render = function() {
 			// keep track of our position on the map as we travel along this
 			// ray;
 			// the ray originates at the camera's position
-			let rayOriginX = camPos.x;// + this.headBobPosOffset.x;
-			let rayOriginY = camPos.y;// + this.headBobPosOffset.y;
+			let rayOriginX = camPos.x + this.headBobPosOffset.x;
+			let rayOriginY = camPos.y + this.headBobPosOffset.y;
 			let rayx = rayOriginX;
 			let rayy = rayOriginY;
 
 			// calculate the ray's angle with respect to the positive x-axis;
 			// we will treat counter-clockwise rotation as positive;
-			// remember that going "up" is actually in the decreasing y-direction;
+			// remember that going "up" is actually in the decreasing
+			// y-direction;
 			// remember to take into account head rotation bobbing
-			const rayAng = wrapFull(camera.calcRayAng(strip) + this.headBob.getAngOffset().v);
+			//const rayAng = wrapFullDeg(camera.calcRayAng(strip) + radToDeg(this.headBob.getAngOffset().v));
+			const rayAng = wrapFullDeg(camera.calcRayAng(strip) + radToDeg(this.headBob.getAngOffset().v));
+
+			// slope is rise over run, however we must invert the rise,
+			// since the y-axis increases in the downward direction;
+			// so, we take the negative rise over run
+			const raySlope = -Math.tan(degToRad(rayAng));
+			//console.log("angle index is " + wrapFullDeg(Math.floor(camera.rot.v + radToDeg(this.headBob.getAngOffset().v))));
+			//const raySlope = -camera.rayAngTanTable[wrapFullDeg(Math.floor(camera.rot.v + radToDeg(this.headBob.getAngOffset().v)))][strip];
+
+			// we know the ray passes through the camera's position, so
+			// we have enough information to calculate a y-intercept;
+			const rayIntercept = rayOriginY - raySlope * rayOriginX;
 
 			// this will hold the block id of the first wall hit by the ray;
 			// 0 means no wall was hit
 			let firstBlockHitId = 0;
 
-			// determine the edge cases, if the ray is going exactly vertically or
-			// horizontally
-			const exactlyRight = equalsWithinTol(rayAng, 0.0, RAY_ANG_TOL);
-			const exactlyUp = equalsWithinTol(rayAng, Math.PI / 2,
-					RAY_ANG_TOL);
-			const exactlyLeft = equalsWithinTol(rayAng, Math.PI, RAY_ANG_TOL);
-			const exactlyDown = equalsWithinTol(rayAng, 3 * Math.PI / 2,
-					RAY_ANG_TOL);
+			// determine the edge cases, if the ray is going exactly vertically
+			// or horizontally
+			const exactlyRight = equalsWithinTol(rayAng, 0, RAY_ANG_TOL);
+			const exactlyUp = equalsWithinTol(rayAng, 90, RAY_ANG_TOL);
+			const exactlyLeft = equalsWithinTol(rayAng, 180, RAY_ANG_TOL);
+			const exactlyDown = equalsWithinTol(rayAng, 270, RAY_ANG_TOL);
 
 			// keep track of how far we have traveled along this ray;
 			// we will only go as far as the camera's visibility, in blocks, in
@@ -192,6 +212,7 @@ Canvas2DRaycaster.prototype.render = function() {
 
 			// keep track of what side of a wall he hit closest;
 			let sideOfWall;
+
 			//while (blocksTraveledX < VISIBILITY && blocksTraveledY < VISIBILITY) {
 			//while (Math.sqrt(blocksTraveledX * blocksTraveledX + blocksTraveledY * blocksTraveledY) < VISIBILITY) {
 			while (blocksTraveledX + blocksTraveledY < VISIBILITY) {
@@ -210,31 +231,31 @@ Canvas2DRaycaster.prototype.render = function() {
 				} else if (exactlyDown) {
 					nextHorizLine = Math.floor(rayy) + 1;
 				} else {
-					if (rayAng < Math.PI / 2) {
+					if (rayAng < 90) {
 						// we are facing the upper-right quadrant
 						nextHorizLine = Math.floor(rayy);
 						if (nextHorizLine == rayy) {
-							nextHorizLine  -= 1;
+							nextHorizLine -= 1;
 						}
 						nextVertLine = Math.ceil(rayx);
 						if (nextVertLine == rayx) {
 							nextVertLine += 1;
 						}
-					} else if (rayAng < Math.PI) {
+					} else if (rayAng < 180) {
 						// we are facing the upper-left quadrant
 						nextHorizLine = Math.floor(rayy);
 						if (nextHorizLine == rayy) {
-							nextHorizLine  -= 1;
+							nextHorizLine -= 1;
 						}
 						nextVertLine = Math.floor(rayx);
 						if (nextVertLine == rayx) {
 							nextVertLine -= 1;
 						}
-					} else if (rayAng < 3 * Math.PI / 2) {
+					} else if (rayAng < 270) {
 						// we are facing the lower-left quadrant
 						nextHorizLine = Math.ceil(rayy);
 						if (nextHorizLine == rayy) {
-							nextHorizLine  += 1;
+							nextHorizLine += 1;
 						}
 						nextVertLine = Math.floor(rayx);
 						if (nextVertLine == rayx) {
@@ -244,7 +265,7 @@ Canvas2DRaycaster.prototype.render = function() {
 						// we are facing the lower-right quadrant
 						nextHorizLine = Math.ceil(rayy);
 						if (nextHorizLine == rayy) {
-							nextHorizLine  += 1;
+							nextHorizLine += 1;
 						}
 						nextVertLine = Math.ceil(rayx);
 						if (nextVertLine == rayx) {
@@ -276,15 +297,6 @@ Canvas2DRaycaster.prototype.render = function() {
 					rayy = nextHorizLine;
 					sideOfWall = SIDE_NORTH;
 				} else {
-					// slope is rise over run, however we must invert the rise,
-					// since the y-axis increases in the downward direction;
-					// so, we take the negative rise over run
-					const raySlope = -Math.tan(rayAng);
-
-					// we know the ray passes through the camera's position, so
-					// we have enough information to calculate a y-intercept;
-					const rayIntercept = rayOriginY - raySlope * rayOriginX;
-
 					// now, we can plug in the next horizontal and vertical
 					// lines to find where they intersect with the ray, and
 					// choose the intersection that is closer
@@ -322,7 +334,7 @@ Canvas2DRaycaster.prototype.render = function() {
 					if (nextHorizLineDistSquared <= nextVertLineDistSquared) {
 						rayx = nextHorizLineX;
 						rayy = nextHorizLine;
-						if (rayAng > 0 && rayAng < Math.PI) {
+						if (rayAng > 0 && rayAng < 180) {
 							sideOfWall = SIDE_SOUTH;
 						} else {
 							sideOfWall = SIDE_NORTH;
@@ -330,7 +342,7 @@ Canvas2DRaycaster.prototype.render = function() {
 					} else {
 						rayx = nextVertLine;
 						rayy = nextVertLineY;
-						if (rayAng < Math.PI / 2 || rayAng > 3 * Math.PI / 2) {
+						if (rayAng < 90 || rayAng > 270) {
 							sideOfWall = SIDE_WEST;
 						} else {
 							sideOfWall = SIDE_EAST;
@@ -377,7 +389,7 @@ Canvas2DRaycaster.prototype.render = function() {
 					gridRow = Math.floor(rayy);
 					gridCol = Math.floor(rayx);
 				} else {
-					if (rayAng < Math.PI / 2) {
+					if (rayAng < 90) {
 						// upper-right quadrant
 						if (isHorizWall(sideOfWall)) {
 							gridRow = Math.floor(rayy) - 1;
@@ -386,7 +398,7 @@ Canvas2DRaycaster.prototype.render = function() {
 							gridRow = Math.floor(rayy);
 							gridCol = Math.floor(rayx);
 						}
-					} else if (rayAng < Math.PI) {
+					} else if (rayAng < 180) {
 						// upper-left quadrant
 						if (isHorizWall(sideOfWall)) {
 							gridRow = Math.floor(rayy) - 1;
@@ -395,7 +407,7 @@ Canvas2DRaycaster.prototype.render = function() {
 							gridRow = Math.floor(rayy);
 							gridCol = Math.floor(rayx) - 1;
 						}
-					} else if (rayAng < 3 * Math.PI / 2) {
+					} else if (rayAng < 270) {
 						// lower-left quadrant
 						if (isHorizWall(sideOfWall)) {
 							gridRow = Math.floor(rayy);

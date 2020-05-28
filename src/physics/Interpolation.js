@@ -3,12 +3,12 @@
  * can be used for computationally expensive functions which we know that the
  * inputs will always be in a fixed range, and we want to avoid recalculating
  * the value of the function frequently.
- * 
+ *
  * Parameters:
  * fn -- The function we want to tabulate.
  * startInput -- The smallest input in the range of integer inputs, inclusive.
  * endInput -- The largest input in the range of integer inputs, inclusive.
- * 
+ *
  * Returns:
  * An array containing the tabulated values. The value in index 0 corresponds
  * to the value of the function when called using startInput, and the value in
@@ -33,16 +33,16 @@ export const tabulateFunction = (fn, startInput, endInput) => {
  * Linearly interpolate between the start and end values inclusive, over the
  * given number of steps(frames), giving the next value based on what step we
  * are on(the currStep).
- * 
+ *
  * Parameters:
  * startVal -- The starting value.
  * endVal -- The ending value.
  * numSteps -- How many steps does it take to get from start to end.
  * currStep -- The current step number we want to calculate the value for.
- * 
+ *
  * Returns:
  * The value of the interpolation at the given current step number.
- * 
+ *
  * Note:
  * The first step number is considered as zero. So, the last step is actually
  * numSteps - 1.
@@ -61,20 +61,45 @@ export const intLinVal = (startVal, endVal, numSteps, currStep) => {
 };
 
 /**
+ * Linearly interpolate between the start and end values inclusive, using the
+ * given interpolation table instead of re-computing the interpolation factor
+ * each time the function is called.
+ *
+ * Parameters:
+ * startVal -- The starting value.
+ * endVal -- The ending value.
+ * intTableLin -- The interpolation table for the linear function.
+ * currStep -- The current step number we want to calculate the value for.
+ *
+ * Returns:
+ * The value of the interpolation at the given current step number.
+ *
+ * Note:
+ * The first step number is considered as zero. So, the last step is actually
+ * numSteps - 1.
+ */
+export const intLinValTab = (startVal, endVal, intTableLin, currStep) => {
+    // calculate the linearly interpolated value, using the interpolation table
+    // to  determine the interpolation factor, instead of computing it each
+    // time
+    return startVal + intTableLin[currStep] * (endVal - startVal);
+};
+
+/**
  * Linearly interpolate between the start and end vectors inclusive, over the
  * given number of steps(frames), writing the next value based on what step we
  * are on(the currStep) into the destVec.
- * 
+ *
  * Parameters:
  * destVec -- The vector to write the interpolated value to.
  * startVec -- The vector containing the starting value.
  * endVec -- The vector containing the ending value.
  * numSteps -- How many steps does it take to get from start to end.
  * currStep -- The current step number we want to calculate the value for.
- * 
+ *
  * Returns:
  * The destVec, for convenience.
- * 
+ *
  * Note:
  * The first step number is considered as zero. So, the last step is actually
  * numSteps - 1.
@@ -88,20 +113,47 @@ export const intLinVec1 = (destVec, startVec, endVec, numSteps, currStep) => {
 };
 
 /**
+ * Linearly interpolate between the start and end vectors inclusive, using the
+ * given interpolation table instead of re-computing the interpolation factor
+ * each time the function is called.
+ *
+ * Parameters:
+ * destVec -- The vector to write the interpolated value to.
+ * startVec -- The vector containing the starting value.
+ * endVec -- The vector containing the ending value.
+ * intTableLin -- The interpolation table for the linear function.
+ * currStep -- The current step number we want to calculate the value for.
+ *
+ * Returns:
+ * The destVec, for convenience.
+ *
+ * Note:
+ * The first step number is considered as zero. So, the last step is actually
+ * numSteps - 1.
+ */
+export const intLinVec1Tab = (destVec, startVec, endVec, intTableLin, currStep) => {
+    // linearly interpolate the sole component of the 1D vector
+    destVec.v = intLinValTab(startVec.v, endVec.v, intTableLin, currStep);
+
+    // return the vector we wrote to for convenience
+    return destVec;
+};
+
+/**
  * Linearly interpolate between the start and end vectors inclusive, over the
  * given number of steps(frames), writing the next value based on what step we
  * are on(the currStep) into the destVec.
- * 
+ *
  * Parameters:
  * destVec -- The vector to write the interpolated values to.
  * startVec -- The vector containing the starting values for x and y.
  * endVec -- The vector containing the ending values for x and y.
  * numSteps -- How many steps does it take to get from start to end.
  * currStep -- The current step number we want to calculate the values for.
- * 
+ *
  * Returns:
  * The destVec, for convenience.
- * 
+ *
  * Note:
  * The first step number is considered as zero. So, the last step is actually
  * numSteps - 1.
@@ -116,20 +168,48 @@ export const intLinVec2 = (destVec, startVec, endVec, numSteps, currStep) => {
 };
 
 /**
+ * Linearly interpolate between the start and end vectors inclusive, using the
+ * given interpolation table instead of re-computing the interpolation factor
+ * each time the function is called.
+ *
+ * Parameters:
+ * destVec -- The vector to write the interpolated values to.
+ * startVec -- The vector containing the starting values for x and y.
+ * endVec -- The vector containing the ending values for x and y.
+ * intTableLin -- The interpolation table for the linear function.
+ * currStep -- The current step number we want to calculate the values for.
+ *
+ * Returns:
+ * The destVec, for convenience.
+ *
+ * Note:
+ * The first step number is considered as zero. So, the last step is actually
+ * numSteps - 1.
+ */
+export const intLinVec2Tab = (destVec, startVec, endVec, intTableLin, currStep) => {
+    // linearly interpolate the x and y components of the 2D vector
+    destVec.x = intLinValTab(startVec.x, endVec.x, intTableLin, currStep);
+    destVec.y = intLinValTab(startVec.y, endVec.y, intTableLin, currStep);
+
+    // return the vector we wrote to for convenience
+    return destVec;
+};
+
+/**
  * Interpolate from start to end using the sine function from x-values of 0 to
  * PI / 2. The interpolated value at x = 0(currStep = 0) is startVal, and the
  * interpolated value at x = PI / 2(currStep = numSteps - 1) is endVal. Start
  * and end values are inclusive.
- * 
+ *
  * Parameters:
  * startVal -- The starting value.
  * endVal -- The ending value.
  * numSteps -- How many steps does it take to get from start to end.
  * currStep -- The current step number we want to calculate the value for.
- * 
+ *
  * Returns:
  * The value of the interpolation at the given current step number.
- * 
+ *
  * Note:
  * The first step number is considered as zero. So, the last step is actually
  * numSteps - 1.
@@ -146,21 +226,48 @@ export const intSinVal = (startVal, endVal, numSteps, currStep) => {
 };
 
 /**
+ * Interpolate from start to end using the given sine table from x-values of 0
+ * to PI / 2. The x-values for sine are interpolated using the given input
+ * table. The interpolated value at x = 0(currStep = 0) is startVal, and the
+ * interpolated value at x = PI / 2(currStep = numSteps - 1) is endVal. Start
+ * and end values are inclusive.
+ *
+ * Parameters:
+ * startVal -- The starting value.
+ * endVal -- The ending value.
+ * intTableSin -- The interpolation table for the sine function.
+ * currStep -- The current step number we want to calculate the value for.
+ *
+ * Returns:
+ * The value of the interpolation at the given current step number.
+ *
+ * Note:
+ * The first step number is considered as zero. So, the last step is actually
+ * numSteps - 1.
+ */
+export const intSinValTab = (startVal, endVal, intTableSin, currStep) => {
+    // calculate the sinusoidally interpolated value;
+    // recall that the range of sine is [0, 1], so it acts as a percentage in a
+    // way
+    return startVal + intTableSin[currStep] * (endVal - startVal);
+};
+
+/**
  * Interpolate from start to end using the sine function from x-values of 0 to
  * PI / 2. The interpolated vector at x = 0(currStep = 0) is startVec, and the
  * interpolated vector at x = PI / 2(currStep = numSteps - 1) is endVec. Start
  * and end vectors are inclusive.
- * 
+ *
  * Parameters:
  * destVec -- The vector to write the interpolated value to.
  * startVec -- The vector containing the starting value.
  * endVec -- The vector containing the ending value.
  * numSteps -- How many steps does it take to get from start to end.
  * currStep -- The current step number we want to calculate the value for.
- * 
+ *
  * Returns:
  * The destVec, for convenience.
- * 
+ *
  * Note:
  * The first step number is considered as zero. So, the last step is actually
  * numSteps - 1.
@@ -174,21 +281,50 @@ export const intSinVec1 = (destVec, startVec, endVec, numSteps, currStep) => {
 };
 
 /**
+ * Interpolate from start to end using the given sine table from x-values of 0
+ * to PI / 2. The x-values for sine are interpolated using the given input
+ * table. The interpolated vector at x = 0(currStep = 0) is startVec, and the
+ * interpolated vector at x = PI / 2(currStep = numSteps - 1) is endVec. Start
+ * and end vectors are inclusive.
+ *
+ * Parameters:
+ * destVec -- The vector to write the interpolated value to.
+ * startVec -- The vector containing the starting value.
+ * endVec -- The vector containing the ending value.
+ * intTableSin -- The interpolation table for the sine function.
+ * currStep -- The current step number we want to calculate the value for.
+ *
+ * Returns:
+ * The destVec, for convenience.
+ *
+ * Note:
+ * The first step number is considered as zero. So, the last step is actually
+ * numSteps - 1.
+ */
+export const intSinVec1Tab = (destVec, startVec, endVec, intTableSin, currStep) => {
+    // sinusoidally interpolate the sole component of the 1D vector
+    destVec.v = intSinValTab(startVec.v, endVec.v, intTableSin, currStep);
+
+    // return the vector we wrote to for convenience
+    return destVec;
+};
+
+/**
  * Interpolate from start to end using the sine function from x-values of 0 to
  * PI / 2. The interpolated vector at x = 0(currStep = 0) is startVec, and the
  * interpolated vector at x = PI / 2(currStep = numSteps - 1) is endVec. Start
  * and end vectors are inclusive.
- * 
+ *
  * Parameters:
  * destVec -- The vector to write the interpolated value to.
  * startVec -- The vector containing the starting x and y values.
  * endVec -- The vector containing the ending x and y values.
  * numSteps -- How many steps does it take to get from start to end.
  * currStep -- The current step number we want to calculate the value for.
- * 
+ *
  * Returns:
  * The destVec, for convenience.
- * 
+ *
  * Note:
  * The first step number is considered as zero. So, the last step is actually
  * numSteps - 1.
@@ -197,6 +333,36 @@ export const intSinVec2 = (destVec, startVec, endVec, numSteps, currStep) => {
     // linearly interpolate the x and y components of the 2D vector
     destVec.x = intSinVal(startVec.x, endVec.x, numSteps, currStep);
     destVec.y = intSinVal(startVec.y, endVec.y, numSteps, currStep);
+
+    // return the vector we wrote to for convenience
+    return destVec;
+};
+
+/**
+ * Interpolate from start to end using the given sine table from x-values of 0
+ * to PI / 2. The x-values for sine are interpolated using the given input
+ * table. The interpolated vector at x = 0(currStep = 0) is startVec, and the
+ * interpolated vector at x = PI / 2(currStep = numSteps - 1) is endVec. Start
+ * and end vectors are inclusive.
+ *
+ * Parameters:
+ * destVec -- The vector to write the interpolated value to.
+ * startVec -- The vector containing the starting x and y values.
+ * endVec -- The vector containing the ending x and y values.
+ * intTableSin -- The interpolation table for the sine function.
+ * currStep -- The current step number we want to calculate the value for.
+ *
+ * Returns:
+ * The destVec, for convenience.
+ *
+ * Note:
+ * The first step number is considered as zero. So, the last step is actually
+ * numSteps - 1.
+ */
+export const intSinVec2Tab = (destVec, startVec, endVec, intTableSin, currStep) => {
+    // linearly interpolate the x and y components of the 2D vector
+    destVec.x = intSinValTab(startVec.x, endVec.x, intTableSin, currStep);
+    destVec.y = intSinValTab(startVec.y, endVec.y, intTableSin, currStep);
 
     // return the vector we wrote to for convenience
     return destVec;

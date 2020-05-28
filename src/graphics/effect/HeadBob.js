@@ -15,7 +15,11 @@ import {
 import {
     intSinVal,
     intSinVec1,
-    intSinVec2
+    intSinVec2,
+    intSinValTab,
+    intSinVec1Tab,
+    intSinVec2Tab,
+    tabulateFunction
 } from "../../physics/Interpolation";
 
 // how many frames to spend returning to neutral
@@ -34,7 +38,7 @@ const ANG_BOB_LEFT_FRAMES = 26;
 const ANG_BOB_RIGHT_FRAMES = 26;
 
 // tolerance for when the position and angle offsets are close enough to
-// neutral, in pixels and radians respectively
+// neutral, in pixels and degrees respectively
 const POS_OFFSET_TOLERANCE = 0.00001;
 const ANG_OFFSET_TOLERANCE = 0.00001;
 
@@ -44,14 +48,14 @@ HeadBob.prototype.constructor = HeadBob;
 
 /**
  * Initialize this head bob effect.
- * 
+ *
  * Parameters:
  * posBobUp -- The amount to bob the position up from neutral, in pixels.
  * posBobDown -- The amount to bob the position down from neutral, in pixels.
  * posBobLeft -- The amount to bob the position left from neutral, in pixels.
  * posBobRight -- The amount to bob the position right from neutral, in pixels.
  * angBobLeft -- The amount to bob the angle left from neutral, in randians.
- * angBobRight -- The amount to bob the angle right from neutral, in radians.
+ * angBobRight -- The amount to bob the angle right from neutral, in degrees.
  * isMovingForward -- A function that when called tells whether we are moving
  * forward.
  * isMovingBackward -- A function that when called tells whether we are moving
@@ -60,7 +64,7 @@ HeadBob.prototype.constructor = HeadBob;
  * left.
  * isMovingRight -- A function that when called tells whether we are moving
  * right.
- * 
+ *
  * Returns:
  * Nothing.
  */
@@ -73,7 +77,7 @@ export function HeadBob(posBobUp, posBobDown, posBobLeft, posBobRight,
     this.posBobLeft = posBobLeft;
     this.posBobRight = posBobRight;
 
-    // the amounts to bob the angle left and right, in radians
+    // the amounts to bob the angle left and right, in degrees
     this.angBobLeft = angBobLeft;
     this.angBobRight = angBobRight;
 
@@ -84,7 +88,7 @@ export function HeadBob(posBobUp, posBobDown, posBobLeft, posBobRight,
     this.isMovingLeft = isMovingLeft;
     this.isMovingRight = isMovingRight;
 
-    // store the position and angle offset from neutral, in pixels and radians
+    // store the position and angle offset from neutral, in pixels and degrees
     // respectively
     this.currPosOffset = new Vector2(0, 0);
     this.currAngOffset = new Vector1(0);
@@ -137,14 +141,48 @@ export function HeadBob(posBobUp, posBobDown, posBobLeft, posBobRight,
     this.currRetNeutralFrame = 0;
     this.retNeutralMaxPosOffset = this.currPosOffset;
     this.retNeutralMaxAngOffset = this.currAngOffset;
+
+    // generate interpolation tables for the sine function, for use in
+    // interpolating the head bobbing position and angle offset;
+    // these interpolation tables will be keyed by the current frame number of
+    // the bobbing for position or angle in each direction
+    this.posBobUpIntSinTable = tabulateFunction((currFrame) => {
+        return intSinVal(0, 1, POS_BOB_UP_FRAMES, currFrame);
+    }, 0, POS_BOB_UP_FRAMES - 1);
+
+    this.posBobDownIntSinTable = tabulateFunction((currFrame) => {
+        return intSinVal(0, 1, POS_BOB_DOWN_FRAMES, currFrame);
+    }, 0, POS_BOB_DOWN_FRAMES - 1);
+
+    this.posBobLeftIntSinTable = tabulateFunction((currFrame) => {
+        return intSinVal(0, 1, POS_BOB_LEFT_FRAMES, currFrame);
+    }, 0, POS_BOB_LEFT_FRAMES - 1);
+
+    this.posBobRightIntSinTable = tabulateFunction((currFrame) => {
+        return intSinVal(0, 1, POS_BOB_RIGHT_FRAMES, currFrame);
+    }, 0, POS_BOB_RIGHT_FRAMES - 1);
+
+    this.angBobLeftIntSinTable = tabulateFunction((currFrame) => {
+        return intSinVal(0, 1, ANG_BOB_LEFT_FRAMES, currFrame);
+    }, 0, ANG_BOB_LEFT_FRAMES - 1);
+
+    this.angBobRightIntSinTable = tabulateFunction((currFrame) => {
+        return intSinVal(0, 1, ANG_BOB_RIGHT_FRAMES, currFrame);
+    }, 0, ANG_BOB_RIGHT_FRAMES - 1);
+
+    // generate an interpolation table for the return to neutral animation as
+    // well
+    this.retNeutralIntSinTable = tabulateFunction((currFrame) => {
+        return intSinVal(0, 1, RET_NEUTRAL_FRAMES, currFrame);
+    }, 0, RET_NEUTRAL_FRAMES - 1);
 }
 
 /**
  * Return the current position offset of this head bob effect.
- * 
+ *
  * Parameters:
  * None.
- * 
+ *
  * Returns:
  * The current position offset of this head bob effect.
  */
@@ -154,10 +192,10 @@ HeadBob.prototype.getPosOffset = function() {
 
 /**
  * Return the current angle offset of this head bob effect.
- * 
+ *
  * Parameters:
  * None.
- * 
+ *
  * Returns:
  * The current angle offset of this head bob effect.
  */
@@ -197,13 +235,19 @@ HeadBob.prototype.tick = function() {
         // already there
         if (this.currRetNeutralFrame < RET_NEUTRAL_FRAMES) {
             // interpolate the position offset
-            intSinVec2(this.currPosOffset, this.retNeutralMaxPosOffset,
-                    this.neutralPosOffset, RET_NEUTRAL_FRAMES,
+            //intSinVec2(this.currPosOffset, this.retNeutralMaxPosOffset,
+            //        this.neutralPosOffset, RET_NEUTRAL_FRAMES,
+            //        this.currRetNeutralFrame);
+            intSinVec2Tab(this.currPosOffset, this.retNeutralMaxPosOffset,
+                    this.neutralPosOffset, this.retNeutralIntSinTable,
                     this.currRetNeutralFrame);
 
             // interpolate the angle offset
-            intSinVec1(this.currAngOffset, this.retNeutralMaxAngOffset,
-                    this.neutralAngOffset, RET_NEUTRAL_FRAMES,
+            //intSinVec1(this.currAngOffset, this.retNeutralMaxAngOffset,
+            //        this.neutralAngOffset, RET_NEUTRAL_FRAMES,
+            //        this.currRetNeutralFrame);
+            intSinVec1Tab(this.currAngOffset, this.retNeutralMaxAngOffset,
+                    this.neutralAngOffset, this.retNeutralIntSinTable,
                     this.currRetNeutralFrame);
 
             // increment the return to neutral frame counter
@@ -236,8 +280,11 @@ HeadBob.prototype.tick = function() {
 
                 // sinusiodally interpolate the current position offset, in the
                 // upward direction
-                this.currPosOffset.y = intSinVal(this.posBobUpStartOffset,
-                        this.posBobUp, POS_BOB_UP_FRAMES,
+                //this.currPosOffset.y = intSinVal(this.posBobUpStartOffset,
+                //        this.posBobUp, POS_BOB_UP_FRAMES,
+                //        this.currPosBobUpFrame);
+                this.currPosOffset.y = intSinValTab(this.posBobUpStartOffset,
+                        this.posBobUp, this.posBobUpIntSinTable,
                         this.currPosBobUpFrame);
 
                 // increment the bob up frame, and switch to bobbing down if we
@@ -257,8 +304,11 @@ HeadBob.prototype.tick = function() {
 
                 // sinusoidally interpolate the current position offset, in the
                 // downward direction
-                this.currPosOffset.y = intSinVal(this.posBobDownStartOffset,
-                        this.posBobDown, POS_BOB_DOWN_FRAMES,
+                //this.currPosOffset.y = intSinVal(this.posBobDownStartOffset,
+                //        this.posBobDown, POS_BOB_DOWN_FRAMES,
+                //        this.currPosBobDownFrame);
+                this.currPosOffset.y = intSinValTab(this.posBobDownStartOffset,
+                        this.posBobDown, this.posBobDownIntSinTable,
                         this.currPosBobDownFrame);
 
                 // increment the bob down frame, and switch to bobbing up if we
@@ -304,8 +354,11 @@ HeadBob.prototype.tick = function() {
 
                 // sinusoidally interpolate the current position offset, in the
                 // leftward direction
-                this.currPosOffset.x = intSinVal(this.posBobLeftStartOffset,
-                        this.posBobLeft, POS_BOB_LEFT_FRAMES,
+                //this.currPosOffset.x = intSinVal(this.posBobLeftStartOffset,
+                //        this.posBobLeft, POS_BOB_LEFT_FRAMES,
+                //        this.currPosBobLeftFrame);
+                this.currPosOffset.x = intSinValTab(this.posBobLeftStartOffset,
+                        this.posBobLeft, this.posBobLeftIntSinTable,
                         this.currPosBobLeftFrame);
 
                 // increment the bob left frame, and switch to bobbing right if
@@ -325,9 +378,12 @@ HeadBob.prototype.tick = function() {
 
                 // sinusoidally interpolate the current position offset, in the
                 // rightward direction
-                this.currPosOffset.x = intSinVal(this.posBobRightStartOffset,
-                    this.posBobRight, POS_BOB_RIGHT_FRAMES,
-                    this.currPosBobRightFrame);
+                //this.currPosOffset.x = intSinVal(this.posBobRightStartOffset,
+                //        this.posBobRight, POS_BOB_RIGHT_FRAMES,
+                //        this.currPosBobRightFrame);
+                this.currPosOffset.x = intSinValTab(this.posBobRightStartOffset,
+                        this.posBobRight, this.posBobRightIntSinTable,
+                        this.currPosBobRightFrame);
 
                 // increment the bob right frame, and switch to bobbing left if
                 // we have bobbed all the way right
@@ -360,8 +416,11 @@ HeadBob.prototype.tick = function() {
 
             // sinusoidally interpolate the current angle offset, in the
             // leftward direction
-            this.currAngOffset.v = intSinVal(this.angBobLeftStartOffset,
-                    this.angBobLeft, ANG_BOB_LEFT_FRAMES,
+            //this.currAngOffset.v = intSinVal(this.angBobLeftStartOffset,
+            //        this.angBobLeft, ANG_BOB_LEFT_FRAMES,
+            //        this.currAngBobLeftFrame);
+            this.currAngOffset.v = intSinValTab(this.angBobLeftStartOffset,
+                    this.angBobLeft, this.angBobLeftIntSinTable,
                     this.currAngBobLeftFrame);
 
             // increment the bob left frame, and switch to bobbing right if we
@@ -381,9 +440,12 @@ HeadBob.prototype.tick = function() {
 
             // sinusoidally interpolate the current angle offset, in the
             // rightward direction
-            this.currAngOffset.v = intSinVal(this.angBobRightStartOffset,
-                this.angBobRight, ANG_BOB_RIGHT_FRAMES,
-                this.currAngBobRightFrame);
+            //this.currAngOffset.v = intSinVal(this.angBobRightStartOffset,
+            //        this.angBobRight, ANG_BOB_RIGHT_FRAMES,
+            //        this.currAngBobRightFrame);
+            this.currAngOffset.v = intSinValTab(this.angBobRightStartOffset,
+                    this.angBobRight, this.angBobRightIntSinTable,
+                    this.currAngBobRightFrame);
 
             // increment the bob right frame, and switch to bobbing left if we
             // have bobbed all the way right
