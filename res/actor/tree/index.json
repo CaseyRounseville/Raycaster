@@ -1,0 +1,8 @@
+{
+	"textures": [
+		{ "id": "tree", "file": "tree.png" }
+	],
+	"scenes": [
+
+	]
+}
