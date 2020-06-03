@@ -1,0 +1,8 @@
+{
+	"textures": [
+		{ "id": "torch", "file": "torch.png" }
+	],
+	"scenes": [
+
+	]
+}

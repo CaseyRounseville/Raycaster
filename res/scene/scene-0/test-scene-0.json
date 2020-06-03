@@ -326,6 +326,16 @@
           "color": "normal",
           "flag": 38
         }
+      },
+      {
+        "room": 0,
+        "type": "torch",
+        "x": 3.4,
+        "y": 8.0,
+        "arg": {
+          "color": "normal",
+          "flag": 38
+        }
       }
     ]
   },

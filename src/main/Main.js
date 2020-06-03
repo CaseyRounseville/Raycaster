@@ -44,6 +44,9 @@ globalCtxt.player = player;
 // load resource for tree
 resourceBackend.loadResource("tree");
 
+// load resource for torch
+resourceBackend.loadResource("torch");
+
 // set up scene(title screen maybe)
 changeScene("scene-0", "scene-0");
 
