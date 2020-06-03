@@ -163,8 +163,16 @@ Canvas2DGraphicsBackend.prototype.setTintColor = function(tintColor) {
  */
 Canvas2DGraphicsBackend.prototype.renderTexture = function(id, destX, destY,
 		destW, destH, srcX, srcY, srcW, srcH) {
-	this.ctxt.drawImage(this.id2texture[id].getImg(), srcX, srcY, srcW, srcH,
-			destX, destY, destW, destH);
+	// retrieve texture from table
+	const texture = this.id2texture[id];
+
+	// make sure the underlying image is loaded;
+	// attempting to draw an unloaded image(with size zero) could cause an
+	// IndexSizeError to be thrown
+	if (texture.isLoaded()) {
+		this.ctxt.drawImage(this.id2texture[id].getImg(), srcX, srcY, srcW,
+				srcH, destX, destY, destW, destH);
+	}
 };
 
 /**

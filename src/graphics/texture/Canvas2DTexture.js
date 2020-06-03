@@ -34,3 +34,20 @@ export function Canvas2DTexture(texId, width, height, img) {
 Canvas2DTexture.prototype.getImg = function() {
     return this.img;
 };
+
+/**
+ * Return whether the underlying image has finished loading.
+ *
+ * Parameters:
+ * None.
+ *
+ * Returns:
+ * Whether the underlying image has finished loading.
+ */
+Canvas2DTexture.prototype.isLoaded = function() {
+	// some browsers correctly report if the image is fully loaded by setting
+	// the completion flag;
+	// others do not, so we must check one of the natural width or height to
+	// see if it is non-zero
+	return this.img.complete && this.img.naturalWidth > 0;
+};
