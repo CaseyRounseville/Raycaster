@@ -619,7 +619,7 @@ Canvas2DRaycaster.prototype.render = function() {
 	// to the camera(furthest away from the camera first);
 	// since their order will change relatively infrequently(not every frame),
 	// and not by much each time, we will use insertion sort to sort them
-	this.sortBillboards();
+	this.sortBillboards(camera);
 
 	// gather some information about the camera
 	const camFrustrumUpperLimit = wrapFullDeg(camRot.v + FOV / 2);
@@ -681,6 +681,9 @@ Canvas2DRaycaster.prototype.render = function() {
 		// instead, determine the "endpoint" strips on the screen, and loop
 		// over strips on the screen instead, since one pixel on the billboard
 		// may take up multiple pixels on the screen if it is "zoomed-in"
+
+		// FIXME: tree disappears if camera rotation is exactly 0 degrees or
+		// exactly 180 degrees
 
 		// loop through each vertical strip of the billboard sprite
 		for (let billboardStrip = 0; billboardStrip < numBillboardStrips;
