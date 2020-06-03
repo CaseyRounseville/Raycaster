@@ -62,3 +62,10 @@ export const equalsWithinTol = (a, b, tol) => {
       floatEqualsWithinTol(a.y, b.y, tol) &&
       floatEqualsWithinTol(a.z, b.z, tol);
 };
+
+export const distanceBetween = (a, b) => {
+  const diffX = a.x - b.x;
+  const diffY = a.y - b.y;
+  const diffZ = a.z - b.z;
+  return Math.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ);
+};

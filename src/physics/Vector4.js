@@ -9,7 +9,8 @@ export function Vector4(x, y, z, w) {
 }
 
 Vector4.prototype.normalize = function() {
-  const euclideanDist = Math.sqrt(this.x * this.x + this.y * this.y + this.z * this.z + this.w * this.w);
+  const euclideanDist = Math.sqrt(this.x * this.x + this.y * this.y + this.z *
+      this.z + this.w * this.w);
   this.x /= euclideanDist;
   this.y /= euclideanDist;
   this.z /= euclideanDist;
@@ -71,4 +72,13 @@ export const equalsWithinTol = (a, b, tol) => {
       floatEqualsWithinTol(a.y, b.y, tol) &&
       floatEqualsWithinTol(a.z, b.z, tol) &&
       floatEqualsWithinTol(a.w, b.w, tol);
+};
+
+export const distanceBetween = (a, b) => {
+  const diffX = a.x - b.x;
+  const diffY = a.y - b.y;
+  const diffZ = a.z - b.z;
+  const diffW = a.w - b.w;
+  return Math.sqrt(diffX * diffX + diffY * diffY + diffZ * diffZ +
+      diffW * diffW);
 };

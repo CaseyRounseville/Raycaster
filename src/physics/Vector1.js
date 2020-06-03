@@ -43,3 +43,7 @@ export const equals = (a, b) => {
 export const equalsWithinTol = (a, b, tol) => {
   return floatEqualsWithinTol(a.v, b.v, tol);
 };
+
+export const distBetween = (a, b) => {
+  return Math.abs(a.v - b.v);
+};
