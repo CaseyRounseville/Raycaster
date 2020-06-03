@@ -33,12 +33,12 @@ const findTexId = (resIndex, fileName) => {
 
 /**
  * Pack the textures in the resource index into the output object.
- * 
+ *
  * Parameters:
  * resIndex -- The resource index of a directory.
  * srcDirName -- The name of the source resource directory.
  * outObj -- The output object to pack the textures into.
- * 
+ *
  * Returns:
  * Nothing.
  */
@@ -55,12 +55,12 @@ const packTextures = (resIndex, srcDirName, outObj) => {
 
 /**
  * Pack the scenes in the resource index into the output object.
- * 
+ *
  * Parameters:
  * resIndex -- The resource index of a directory.
  * srcDirName -- The name of the source resource directory.
  * outObj -- The output object to pack the scenes into.
- * 
+ *
  * Returns:
  * Nothing.
  */
@@ -81,8 +81,6 @@ const packScenes = (resIndex, srcDirName, outObj) => {
 // argv[3] -- The path of the destination directory.
 let srcDirName = process.argv[2];
 let destDirName = process.argv[3];
-
-console.log("dest dir is" + destDirName);
 
 // read the index file in the source directory
 let resIndex = {};
