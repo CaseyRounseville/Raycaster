@@ -1,3 +1,5 @@
+import { wrapFullDeg } from "../physics/Angle";
+
 /**
  * Initialize a skybox.
  *
@@ -37,6 +39,12 @@ SkyBox.prototype.getTexture = function() {
  * rendering.
  */
 SkyBox.prototype.getStartX = function(camera) {
-    const rotPercentage = 1.0 - camera.rot.v / 360.0;
-    return this.texture.getWidth() * rotPercentage;
+	// calculate the rotation of the camera, as a percentage of a full circle;
+	// be sure to wrap the angle between 0 degrees inclusive and 360 degrees
+	// exclusive
+    const rotPercentage = 1.0 - wrapFullDeg(camera.rot.v) / 360.0;
+
+	// remember that valid x-coordinates on a texture are from 0 pixels to
+	// width - 1 pixels
+    return (this.texture.getWidth() - 1) * rotPercentage;
 };
