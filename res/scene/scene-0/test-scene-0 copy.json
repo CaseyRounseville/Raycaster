@@ -317,32 +317,54 @@
   "actors": {
     "version": 0,
     "cast": [
-      {
-        "room": 0,
-        "type": "tree",
-        "x": 3.4,
-        "y": 6.7,
-        "arg": {
-          "color": "normal",
-          "flag": 38
-        }
+    {
+      "room": 0,
+      "type": "skeleton",
+      "x": 3.4,
+      "y": 6.7,
+      "z": 0.5,
+      "arg": {
+        "color": "normal",
+        "flag": 38
       }
+    },
+    {
+      "room": 1,
+      "type": "switch",
+      "x": 6.8,
+      "y": 9.9,
+      "z": 0.5,
+      "arg": {
+        "flag": 7
+      }
+    },
+    {
+      "room": -1,
+      "type": "door",
+      "x": 6.8,
+      "y": 9.9,
+      "z": 0.5,
+      "arg": {
+        "fromFront": 1,
+        "fromBack": 0
+      }
+    }
     ]
   },
 
   "entrances": {
-    "version": 0,
-    "cast": [
-      {
-        "room": 1,
-        "type": "player",
-        "x": 0.0,
-        "y": 0.0,
-        "z": 0.5,
-        "arg": {
+  "version": 0,
+  "cast": [
+  {
+    "room": 1,
+    "type": "player",
+    "x": 0.0,
+    "y": 0.0,
+    "z": 0.5,
+    "arg": {
 
-        }
-      }
-    ]
+    }
+  }
+  ]
   }
 }

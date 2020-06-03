@@ -1,15 +1,21 @@
+import { Vector2 } from "../physics/Vector2";
+
 /**
- * a billboard graphics object
+ * Initialize a billboard graphics object.
+ *
+ * Parameters:
+ * texture -- The texture to display on this billboard.
+ * pos -- The position of this billboard.
+ *
+ * Returns:
+ * None.
+ *
+ * Note:
+ * The position passed here is "bound", so when changes are made to the pos
+ * object somewhere else, those changes are updated automatically in this
+ * billboard.
  */
-export function Billboard(id, x, y, rot, width, height) {
-  this.id = id;
-  this.x = x;
-  this.y = y;
-  
-  // for enemies and other non-block objects, the rotation
-  // is always facing the camera
-  this.rot = rot;
-  
-  this.width = width;
-  this.height = height;
+export function Billboard(texture, pos) {
+  this.texture = texture;
+  this.pos = pos;
 }

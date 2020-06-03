@@ -1,3 +1,3 @@
 export const loadProtoActors = (obj) => {
-  return obj.protoActors;
+  return obj.cast;
 };

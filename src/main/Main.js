@@ -41,6 +41,9 @@ const player = new Player(0, 0);
 player.wire();
 globalCtxt.player = player;
 
+// load resource for tree
+resourceBackend.loadResource("tree");
+
 // set up scene(title screen maybe)
 changeScene("scene-0", "scene-0");
 
