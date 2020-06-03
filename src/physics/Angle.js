@@ -48,6 +48,54 @@ export const radToDeg = (rad) => {
 };
 
 /**
+ * Return whether ang is between low and high, inclusive. Angles must be given
+ * in radians. The difference between low and high must be strictly less than
+ * pi radians.
+ *
+ * Parameters:
+ * ang -- The angle, in radians, to test if it is between low and high.
+ * low -- The lower bound, inclusive, in radians, of the range of angles.
+ * high -- The upper bound, inclusive, in radians, of the range of angles.
+ *
+ * Returns:
+ * Whether ang is between low and high, inclusive.
+ */
+export const isBetween = (ang, low, high) => {
+	// determine the difference between the bounding angles, making sure to
+	// wrap it
+	const diff = wrapFull(high - low);
+
+	// in order for ang to lie between low and high, the difference from high
+	// to ang, and the difference from ang to low, must both be no larger than
+	// the difference from high to low
+	return wrapFull(high - ang) <= diff && wrapFull(ang - low) <= diff;
+};
+
+/**
+ * Return whether ang is between low and high, inclusive. Angles must be given
+ * in degrees. The difference between low and high must be strictly less than
+ * 180 degrees.
+ *
+ * Parameters:
+ * ang -- The angle, in degrees, to test if it is between low and high.
+ * low -- The lower bound, inclusive, in degrees, of the range of angles.
+ * high -- The upper bound, inclusive, in degrees, of the range of angles.
+ *
+ * Returns:
+ * Whether ang is between low and high, inclusive.
+ */
+export const isBetweenDeg = (ang, low, high) => {
+	// determine the difference between the bounding angles, making sure to
+	// wrap it
+	const diff = wrapFullDeg(high - low);
+
+	// in order for ang to lie between low and high, the difference from high
+	// to ang, and the difference from ang to low, must both be no larger than
+	// the difference from high to low
+	return wrapFullDeg(high - ang) <= diff && wrapFullDeg(ang - low) <= diff;
+};
+
+/**
  * Wrap the given angle between 0 radians inclusive and 2 pi radians exclusive.
  *
  * Parameters:
