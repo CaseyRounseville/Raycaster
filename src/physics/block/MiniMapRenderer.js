@@ -53,4 +53,14 @@ MiniMapRenderer.prototype.render = function(backend) {
         backend.fillRect(topLeftX + player.pos.x * BLOCK_WIDTH, topLeftY +
                 player.pos.y * BLOCK_HEIGHT, BLOCK_WIDTH, BLOCK_HEIGHT);
     }
+
+    // draw the actors of the current scene(besides the player)
+    if (globalCtxt.scene) {
+        backend.setFillColor(Color.YELLOW);
+        const actors = globalCtxt.scene.actors;
+        actors.forEach((actor) => {
+            backend.fillRect(topLeftX + actor.pos.x * BLOCK_WIDTH, topLeftY +
+                    actor.pos.y * BLOCK_HEIGHT, BLOCK_WIDTH, BLOCK_HEIGHT);
+        });
+    }
 };
