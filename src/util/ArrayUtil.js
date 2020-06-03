@@ -23,3 +23,7 @@ export const setRangeFn = (arr, start, end, fn) => {
   }
   return arr;
 };
+
+export const clear = (arr) => {
+  arr.splice(0, arr.length);
+};
