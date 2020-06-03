@@ -9,6 +9,8 @@ import { registerTask } from "../task/TaskSystem";
 
 import { loadScene } from "./SceneLoader";
 
+import { setDebugSceneName } from "../ui/DebugPanel";
+
 export const changeScene = (resId, sceneId) => {
   // load scene
   // probably will involve a task to fade screen to black,
@@ -21,26 +23,30 @@ export const changeScene = (resId, sceneId) => {
 	if (globalCtxt.scene) {
 	  // TODO: implement me
 	}
-	
+
 	// load new scene
 	let newScene = loadScene(resId, sceneId);
+	globalCtxt.scene = newScene;
 	newScene.wire();
-	
+
+	// update the scene name in the debug display
+	setDebugSceneName(sceneId);
+
 	// retrieve backends
 	let graphicsBackend = globalCtxt.graphicsBackend;
 	let renderer = globalCtxt.renderer;
-	
+
 	const fadeIn = new FadeIn(BLACK, 120);
 	fadeIn.wire();
 	fadeIn.registerCallback(() => {
 	  // do something
 	  fadeIn.unwire();
 	});
-	
+
 	// careful about registering from a callback
 	registerTask(fadeIn);
 	fadeOut.unwire();
   });
-  
+
   registerTask(fadeOut);
 };

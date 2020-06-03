@@ -6,6 +6,12 @@ import {
 	wrapFullDeg
 } from "../../physics/Angle";
 
+import {
+	setDebugPlayerX,
+	setDebugPlayerY,
+	setDebugPlayerR
+} from "../../ui/DebugPanel";
+
 /**
  * Initialize this player input handler.
  *
@@ -75,9 +81,14 @@ PlayerInputHandler.prototype.handleInput = function(backend) {
 	// handle any rotation, after the movement
 	if (backend.isDown(InputBackend.BTN_ROT_LEFT)) {
 		// counter-clockwise rotation is positive
-		this.player.rot.v = wrapFullDeg(this.player.rot.v + 2);
+		this.player.rot.v = wrapFullDeg(this.player.rot.v + 1);
 	} else if (backend.isDown(InputBackend.BTN_ROT_RIGHT)) {
 		// clockwise rotation is negative
-		this.player.rot.v = wrapFullDeg(this.player.rot.v - 2);
+		this.player.rot.v = wrapFullDeg(this.player.rot.v - 1);
 	}
+
+	// update debug display
+	setDebugPlayerX(this.player.pos.x);
+	setDebugPlayerY(this.player.pos.y);
+	setDebugPlayerR(this.player.rot.v);
 };

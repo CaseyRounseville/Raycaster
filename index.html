@@ -5,10 +5,57 @@
 	</head>
 	<body>
 		<div>
-			<div id="dialogDiv" class="dialog" style="visibility: hidden">
-				<div id="dialogTextBox" class="text-box"></div>
-				<div id="dialogButtonBox" class="button-box"></div>
+			<!-- debug panel, for displaying debug information -->
+			<div id="debugDiv" class="ui-debug" style="visibility: visible">
+				<table id="debugTable" class="ui-debug-table">
+					<tr>
+						<td class="ui-debug-td">
+							Scene: <span id="debugSceneName"></span>
+						</td>
+						<td class="ui-debug-td">
+							X: <span id="debugPlayerX"></span>
+						</td>
+						<td class="ui-debug-td">c</td>
+					</tr>
+					<tr>
+						<td class="ui-debug-td">a</td>
+						<td class="ui-debug-td">
+							Y: <span id="debugPlayerY"></span>
+						</td>
+						<td class="ui-debug-td">c</td>
+					</tr>
+					<tr>
+						<td class="ui-debug-td">a</td>
+						<td class="ui-debug-td">
+							R: <span id="debugPlayerR"></span>
+						</td>
+						<td class="ui-debug-td">c</td>
+					</tr>
+					<tr>
+						<td class="ui-debug-td">a</td>
+						<td class="ui-debug-td">b</td>
+						<td class="ui-debug-td">c</td>
+					</tr>
+					<tr>
+						<td class="ui-debug-td">a</td>
+						<td class="ui-debug-td">b</td>
+						<td class="ui-debug-td">c</td>
+					</tr>
+					<tr>
+						<td class="ui-debug-td">a</td>
+						<td class="ui-debug-td">b</td>
+						<td class="ui-debug-td">c</td>
+					</tr>
+				</table>
 			</div>
+
+			<!-- dialog area, for displaying interactive dialogs -->
+			<div id="dialogDiv" class="ui-dialog" style="visibility: hidden">
+				<div id="dialogTextBox" class="ui-text-box"></div>
+				<div id="dialogButtonBox" class="ui-button-box"></div>
+			</div>
+
+			<!-- main canvas for rendering the game -->
 			<canvas id="canvas" width="320" height="240"></canvas>
 		</div>
 		<script src="./dist/bundle.js"></script>

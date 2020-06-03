@@ -39,7 +39,7 @@ export const showDialog = (dialog) => {
     };
 
     // kick off the text rolling
-    interval = setInterval(addChar, 3.0 * (1000.0 / 60));
+    interval = setInterval(addChar, 1.0 * (1000.0 / 60));
 };
 
 export const closeDialog = () => {
