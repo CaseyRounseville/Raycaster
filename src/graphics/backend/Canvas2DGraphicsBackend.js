@@ -193,7 +193,7 @@ Canvas2DGraphicsBackend.prototype.clearScreen = function() {
  * 
  * Parameters:
  * id -- The id of the texture to be loaded.
- * b64 -- A string of the texture encoded in bas64 format.
+ * b64 -- A string of the texture encoded in base64 format.
  * 
  * Returns:
  * Nothing.
