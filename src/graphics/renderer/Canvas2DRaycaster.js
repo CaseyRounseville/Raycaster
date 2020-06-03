@@ -1,6 +1,6 @@
 import { INTERNAL_WIDTH, INTERNAL_HEIGHT } from "../backend/GraphicsBackend";
 
-import { VISIBILITY, DIST_TO_PLANE } from "../Camera";
+import { VISIBILITY, DIST_TO_PLANE, FOV } from "../Camera";
 
 import { BLUE, GREEN, GRAY, RED } from "../util/Color";
 
@@ -15,13 +15,11 @@ import {
 } from "../../physics/block/Block";
 
 import {
-	add as vector1Add,
-	copy as vector1Copy
-} from "../../physics/Vector1";
-
-import {
-	add as vector2Add,
-	copy as vector2Copy
+	add as vec2Add,
+	subtract as vec2Subtract,
+	copy as vec2Copy,
+	distBetween as vec2DistBetween,
+	Vector2
 } from "../../physics/Vector2";
 
 import {
@@ -30,6 +28,7 @@ import {
 	tanTable,
 	degToRad,
 	radToDeg,
+	isBetweenDeg,
 	wrapFullDeg
 } from "../../physics/Angle"
 
@@ -53,7 +52,13 @@ export function Canvas2DRaycaster(backend) {
 
 	this.backend = backend;
 
-
+	// a depth buffer to store the perpendicular distance, in blocks, from the
+	// camera to a wall, one depth for each vertical strip of the screen;
+	// the depth buffer initially contains zeros
+	this.depthBuffer = [];
+	for (let strip = 0; strip < INTERNAL_WIDTH; strip++) {
+		this.depthBuffer.push(0);
+	}
 };
 
 Canvas2DRaycaster.prototype.setSkyBox = function(skyBox) {
@@ -70,6 +75,60 @@ Canvas2DRaycaster.prototype.registerBillboard = function(billboard) {
 
 Canvas2DRaycaster.prototype.unregisterBillboard = function(billboard) {
 	Renderer.prototype.unregisterBillboard.call(this, billboard);
+};
+
+/**
+ * Sort the registered billboards in reverse order of distance from the camera.
+ * So, the furthest billboard from the camera comes first in the sorted order.
+ * This function uses insertion sort to perform the sorting, since the order is
+ * unlikely to change dramatically from frame to frame(the billboards array is
+ * almost always sorted or nearly sorted).
+ *
+ * Parameters:
+ * camera -- The camera to measure billboards' distances away from.
+ *
+ * Returns:
+ * Nothing.
+ */
+Canvas2DRaycaster.prototype.sortBillboards = function(camera) {
+	// if there are less than two billboards, then the array is sorted
+	if (this.billboards.length < 2) {
+		return;
+	}
+
+	// use insertion sort to sort the billboards
+	const camPos = camera.getPos();
+	const camRot = camera.getRot();
+	for (let firstUnsorted = 1; firstUnsorted < this.billboards.length; firstUnsorted++) {
+		// calculate the distance from the current unsorted billboard to the
+		// camera
+		const currBillboard = this.billboards[firstUnsorted];
+		const currBillboardDist = vec2DistBetween(currBillboard.pos, camPos);
+
+		// move the leftmost unsorted billboard to the left, into the sorted
+		// portion of the array, until it is sorted with respect to its
+		// immediate neighbors
+		let sortedPos = firstUnsorted;
+		let leftNeighbor = this.billboards[sortedPos - 1];
+		let leftNeighborDist = vec2DistBetween(leftNeighbor.pos, camPos);
+		while (sortedPos > 0 && currBillboardDist > leftNeighborDist) {
+			// swap the current billboard with its left neighbor
+			const temp = this.billboards[sortedPos - 1];
+			this.billboards[sortedPos - 1] = this.billboards[sortedPos];
+			this.billboards[sortedPos] = temp;
+
+			// update the sorted positon variable for the billboard we are
+			// trying to sort with respect to its immediate neighbors
+			sortedPos--;
+
+			// update the distance from the camera of the current billboard's
+			// left neighbor, assuming there is a left neighbor
+			if (sortedPos > 0) {
+				leftNeighbor = this.billboards[sortedPos - 1];
+				leftNeighborDist = vec2DistBetween(leftNeighbor.pos, camPos);
+			}
+		}
+	}
 };
 
 Canvas2DRaycaster.prototype.registerOverlay = function(overlay) {
@@ -121,13 +180,13 @@ Canvas2DRaycaster.prototype.render = function() {
 	this.backend.setFillColor(GRAY);
 	this.backend.fillRect(0, INTERNAL_HEIGHT / 2, INTERNAL_WIDTH, INTERNAL_HEIGHT / 2);
 
+	const camera = this.backend.getCamera();
+	let camPos = camera.getPos();
+	let camRot = camera.getRot();
+
 	// only render the blockmap if it exists
 	if (this.blockMap) {
-		// render blockMap and billboards(need to do them at the same time);
-		const camera = this.backend.getCamera();
-		let camPos = camera.getPos();
-		let camRot = camera.getRot();
-
+		// render blockMap
 		// take the left/right and angle head bobbing effect into account, if
 		// there is one;
 		// the up/down head bobbing will need to be done when each strip is
@@ -137,7 +196,7 @@ Canvas2DRaycaster.prototype.render = function() {
 			// left/right strafing for player input;
 			// first, we will convert the head bob's positon offset into units
 			// of blocks, since it is given in pixels
-			vector2Copy(this.headBobPosOffset, this.headBob.getPosOffset());
+			vec2Copy(this.headBobPosOffset, this.headBob.getPosOffset());
 			this.headBobPosOffset.x = pixelsToBlocks(this.headBobPosOffset.x);
 			//console.log("head bob offset x is " + this.headBobPosOffset.x);
 
@@ -473,6 +532,10 @@ Canvas2DRaycaster.prototype.render = function() {
 				let perpDistToWall = trueDistToWall *
 						camera.cosRelativeRayAng(strip);
 
+				// put this perpendicular distance into the depth buffer for
+				// later use, when we render the billboards
+				this.depthBuffer[strip] = perpDistToWall;
+
 				// we will assume every wall is exactly the same height(the
 				// BLOCK_SIZE), and that the camera is exactly halfway above
 				// the ground and below the ceiling;
@@ -545,7 +608,171 @@ Canvas2DRaycaster.prototype.render = function() {
 								heightOnScreen, srcX, srcY, 1, BLOCK_SIZE);
 						break;
 				}
+			} else {
+				this.depthBuffer[strip] = Infinity;
 			}
+		}
+	}
+
+	// render all the billboards;
+	// first, we need to sort them in reverse order by perpendicular distance
+	// to the camera(furthest away from the camera first);
+	// since their order will change relatively infrequently(not every frame),
+	// and not by much each time, we will use insertion sort to sort them
+	this.sortBillboards();
+
+	// gather some information about the camera
+	const camFrustrumUpperLimit = wrapFullDeg(camRot.v + FOV / 2);
+	const camFrustrumLowerLimit = wrapFullDeg(camRot.v - FOV / 2);
+	const camPlaneSlope = camera.planeSlopeTable[camRot.v];
+	const camPlaneMidX = camPos.x + DIST_TO_PLANE * cosTable[camRot.v];
+	const camPlaneMidY = camPos.y + DIST_TO_PLANE * -sinTable[camRot.v];
+	const camPlaneIntercept = camPlaneMidY - camPlaneSlope * camPlaneMidX;
+	const camLineIntercept = camPos.y - camPlaneSlope * camPos.x;
+	for (let i = 0; i < this.billboards.length; i++) {
+		// gather information about the current billboard
+		const billboard = this.billboards[i];
+		const texture = billboard.texture;
+		const numBillboardStrips = texture.getWidth();
+
+		// calculate the y-intercept of the line containing the billboard;
+		// we know this line passes through the billboard's center position
+		const billboardIntercept = billboard.pos.y -
+				camPlaneSlope * billboard.pos.x;
+
+		// calculate the perpendicular distance between the camera and the
+		// billboard, by drawing a line perpendicular to both the line
+		// containing the billboard, and the camera line(and intersecting
+		// both);
+		// to make things simple, we will set x = 0 for the intersection point
+		// on the line containing the billboard;
+		// note that this intersection point need not actually lie on the
+		// billboard
+		const billboardIntersectionX = 0;
+		const billboardIntersectionY = billboardIntercept;
+
+		// the billboard slope is the same as the camera plane slope;
+		// to find the slope perpendicular to that, we take the negative
+		// reciprocal;
+		// remember, we said the intersection point on the billboard line is at
+		// x = 0, so the perpendicular line shares the same y-intercept as the
+		// billboard line
+		const perpSlope = -1.0 / camPlaneSlope;
+		const perpIntercept = billboardIntercept;
+
+		// compute the intersection point on the line through the camera
+		// position, with the line perpendicular to the billboard, and also
+		// passing through the intersection point on the billboard;
+		// note that the camLine in this case is not the same as the camera
+		// plane;
+		// instead, it is a line through the camera position
+		const camLineIntersectionX = (camLineIntercept - perpIntercept) /
+				(perpSlope - camPlaneSlope);
+		const camLineIntersectionY = camPlaneSlope * camLineIntersectionX +
+				camLineIntercept;
+
+		// finally, calculate the distance between the two intersection points
+		const perpDiffX = billboardIntersectionX - camLineIntersectionX;
+		const perpDiffY = billboardIntersectionY - camLineIntersectionY;
+		const perpDistToBillboard = Math.sqrt(perpDiffX * perpDiffX +
+				perpDiffY * perpDiffY);
+
+		// FIXME: don't loop through each strip of the billboard;
+		// instead, determine the "endpoint" strips on the screen, and loop
+		// over strips on the screen instead, since one pixel on the billboard
+		// may take up multiple pixels on the screen if it is "zoomed-in"
+
+		// loop through each vertical strip of the billboard sprite
+		for (let billboardStrip = 0; billboardStrip < numBillboardStrips;
+				billboardStrip++) {
+			// determine which direction the billboard is "facing";
+			// note that billboards always face in the opposite direction as
+			// the camera
+			const billboardRot = wrapFullDeg(camRot.v + 180);
+
+			// determine the angle to use for the trig operation to calculate
+			// the offset from the center of the billboard where the strip on
+			// the billboard is
+			let billboardAxisAng;
+			if (billboardStrip < numBillboardStrips / 2) {
+				billboardAxisAng = wrapFullDeg(billboardRot + 90);
+			} else {
+				billboardAxisAng = wrapFullDeg(billboardRot - 90);
+			}
+
+			// determine the x and y coordinates, in blocks, of the point at
+			// which the ray hits the strip of the billboard
+			const distFromBillboardCenter = Math.abs(pixelsToBlocks(
+					numBillboardStrips / 2 - billboardStrip));
+			const billboardHitPos = new Vector2(0, 0);
+			billboardHitPos.x = billboard.pos.x +
+					distFromBillboardCenter * cosTable[billboardAxisAng];
+			billboardHitPos.y = billboard.pos.y -
+					distFromBillboardCenter * sinTable[billboardAxisAng];
+
+			// determine if this strip of the billboard is in view of the
+			// camera;
+			// if it is not, then move on to the next billboard strip;
+			// note that if the strip of billboard is in view of the camera,
+			// then we are guaranteed an intersection of the ray with the
+			// camera plane
+			const ang = wrapFullDeg(radToDeg(Math.atan2(
+					-(billboardHitPos.y - camPos.y),
+					billboardHitPos.x - camPos.x)));
+			if (!isBetweenDeg(ang, camFrustrumLowerLimit,
+					camFrustrumUpperLimit)) {
+				continue;
+			}
+
+			// construct a line segment from the hit point on the billboard to
+			// the camera's position;
+			// we will represent this segment using slope and y-intercept, and
+			// its endpoints are the hit point on the billboard, and the
+			// camera's position;
+			// note that we must not invert the y-axis this time, since we are
+			// not dealing with any angles, and instead just taking a slope
+			const raySlope = (billboardHitPos.y - camPos.y) /
+					(billboardHitPos.x - camPos.x);
+			const rayIntercept = camPos.y - raySlope * camPos.x;
+
+			// now we have enough information to calculate the point at which
+			// the ray passes through the screen
+			const screenHitPosX = (camPlaneIntercept - rayIntercept) /
+					(raySlope - camPlaneSlope);
+			const screenHitPosY = camPlaneSlope * screenHitPosX +
+					camPlaneIntercept;
+
+			// determine which screen strip this is
+			const diffX = screenHitPosX - camPlaneMidX;
+			const diffY = screenHitPosY - camPlaneMidY;
+			const pixelsFromScreenCenter = Math.floor(blocksToPixels(
+					Math.sqrt(diffX * diffX + diffY * diffY)));
+			let screenStrip;
+			if (isBetweenDeg(ang, camRot.v, camFrustrumUpperLimit)) {
+				screenStrip = INTERNAL_WIDTH / 2 - pixelsFromScreenCenter;
+			} else {
+				screenStrip = INTERNAL_WIDTH / 2 + pixelsFromScreenCenter;
+			}
+			if (screenStrip < 0 || screenStrip > INTERNAL_WIDTH - 1) {
+				debugger;
+			}
+
+			// if this strip of billboard was occluded by a wall, then we will
+			// not draw it
+			if (perpDistToBillboard > this.depthBuffer[screenStrip]) {
+				continue;
+			}
+
+			// now we know that we must render this strip
+			const heightOnScreen = blocksToPixels(DIST_TO_PLANE) *
+					texture.getHeight() / blocksToPixels(perpDistToBillboard);
+
+			// avoid texture bleeding
+			const srcX = billboardStrip;
+			const srcY = 0;
+			this.backend.renderTexture(texture.getId(), screenStrip,
+				INTERNAL_HEIGHT / 2 - heightOnScreen / 2, 1,
+				heightOnScreen, srcX, srcY, 1, texture.getHeight());
 		}
 	}
 

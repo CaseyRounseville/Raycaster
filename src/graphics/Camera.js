@@ -6,6 +6,7 @@ import { INTERNAL_WIDTH } from "./backend/GraphicsBackend";
 import {
 	radToDeg,
 	degToRad,
+	wrapHalfDeg,
 	wrapFullDeg
 } from "../physics/Angle";
 
@@ -30,7 +31,6 @@ export function Camera() {
 	this.pos = new Vector2(0, 0);
 	this.rot = new Vector1(0);
 	this.height = new Vector1(0.5);
-	this.depthBuffer = [];
 
 	// generate a tabulation of the atan2 function for use in calcRayAng, to
 	// avoid calculating arctan in hot loops;
@@ -44,7 +44,7 @@ export function Camera() {
 		// perpendicular to the screen plane, passing through its center;
 		// make sure to convert to degrees, and remember to wrap the angle
 		// between 0 inclusive and 360 exclusive, since the range of atan2 is
-		// -pi / 2 inclusive to pi / 2 inclusive.
+		// -pi inclusive to pi inclusive.
 		let ang = wrapFullDeg(radToDeg(Math.atan2(x, DIST_TO_PLANE)));
 
 		// return that angle
@@ -73,6 +73,30 @@ export function Camera() {
 			// strip
 			return Math.tan(degToRad(deg + this.relativeRayAngTable[strip]));
 		}, 0, INTERNAL_WIDTH - 1);
+	}, 0, 359);
+
+	// generate a tabulation of the slopes the screen plane, dependent on the
+	// angle that the camera is facing;
+	// the slope is in terms of blocks, however the slope in blocks will equal
+	// the slope in pixels if the width and height, in pixels, of a block are
+	// the same
+	this.planeSlopeTable = tabulateFunction((deg) => {
+		// the angle of the plane is the rotation of the camera, plus 90
+		// degrees;
+		// note that we only need to look at the upper two quadrants
+		const planeAng = wrapHalfDeg(deg + 90);
+
+		// handle edge case
+		if (planeAng == 90) {
+			return Infinity;
+		}
+
+		// we will pretend we pass through the origin to make it easy;
+		// also imagine we are making a right triangle, and the bottom leg of
+		// the triangle has length of one;
+		// remember to take the negative tangent, since the y-axis is inverted;
+		// also remember to convert to radians
+		return -Math.tan(degToRad(planeAng));
 	}, 0, 359);
 };
 
