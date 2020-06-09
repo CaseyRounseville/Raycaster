@@ -35,6 +35,11 @@ export const showDialog = (dialog) => {
             dialog.buttons.forEach((btn) => {
                 dialogButtonBox.appendChild(btn);
             });
+
+			// give the first button of the dialog focus, if it exists
+			if (dialog.buttons.length > 0) {
+				dialog.buttons[0].focus();
+			}
         }
     };
 
