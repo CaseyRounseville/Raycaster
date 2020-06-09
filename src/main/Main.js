@@ -12,6 +12,7 @@ import { changeScene } from "../scene/SceneChanger";
 import { showDialog } from "../ui/DialogSystem";
 import { SceneSelectDialog } from "../ui/SceneSelectDialog";
 import { createIntroDialog } from "../ui/TestStory";
+import { setDebugFps } from "../ui/DebugPanel";
 
 // set up global ctxt as a singleton
 const globalCtxtStr = `{
@@ -52,15 +53,54 @@ changeScene("scene-0", "scene-0");
 
 showDialog(createIntroDialog());
 
+let timeBeginPrevMs = 0;
+let timeBeginCurrMs = 0;
+let timeElapsedMs = 0;
+let avgFps = 0;
+let fps = 0;
+let frameCount = 0;
+const TARGET_FRAME_TIME_MS = 1000.0 / 60;
 const loop = () => {
+	// request an animation frame to be scheduled for the current frame
+	requestAnimationFrame(loop);
+
+	// timing calculations;
+	// measure the time, in ms, between the start of consecutive frames
+	timeBeginPrevMs = timeBeginCurrMs;
+	timeBeginCurrMs = performance.now();
+	timeElapsedMs = timeBeginCurrMs - timeBeginPrevMs;
+	fps = 1000.0 / timeElapsedMs;
+	frameCount++;
+
+	// use a weighted average to calculate average fps, giving more weight to
+	// the current instantaneous fps
+	avgFps = 0.25 * avgFps + 0.75 * fps;
+
+	// only update the fps counter sometimes, to avoid excessive flickering
+	if (frameCount % 30 == 0) {
+		setDebugFps(avgFps);
+	}
+
 	inputBackend.process();
 	tickTasks();
 	//graphicsBackend.render();
 	renderer.render();
+
+	// wait for the appropriate amount of time until the next frame begins,
+	// taking into account the average amount of error in timing
+	/*const timeToWaitMs = TARGET_FRAME_TIME_MS - timeElapsedMs -
+			avgFrameTimeOffset;
+	if (timeToWaitMs < 0) {
+		// we took longer than we should have, so don't wait at all
+		setTimeout(loop, 0);
+	} else {
+		// we have some time left over, so let the cpu rest for a few ms
+		setTimeout(loop, timeToWaitMs);
+	}*/
 };
 
 // start game loop
-setInterval(loop, 1000.0 / 60.0);
+loop();
 
 /*export {
 	globalCtxt
