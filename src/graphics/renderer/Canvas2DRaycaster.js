@@ -690,8 +690,12 @@ Canvas2DRaycaster.prototype.render = function() {
 				billboardStrip++) {
 			// determine which direction the billboard is "facing";
 			// note that billboards always face in the opposite direction as
-			// the camera
-			const billboardRot = wrapFullDeg(camRot.v + 180);
+			// the camera(toward the camera);
+			// however, when we look at a billboard dead-on, we don't want to
+			// see the texture "mirrored", so we will use just the camera
+			// rotation here, instead of adding 180 degrees
+			//const billboardRot = wrapFullDeg(camRot.v + 180);
+			const billboardRot = camRot.v;
 
 			// determine the angle to use for the trig operation to calculate
 			// the offset from the center of the billboard where the strip on
