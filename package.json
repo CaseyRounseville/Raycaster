@@ -2,6 +2,7 @@
 	"name": "raycaster",
 	"version": "0.0.0",
 	"dependencies": {
+		"canvas": "^2.6.1",
 		"sockets.io": "^1.0.1"
 	},
 	"devDependencies": {
@@ -12,7 +13,7 @@
 	},
 	"scripts": {
 		"start": "webpack --display-modules && start index.html",
-    "start-file-server": "start node tool/FileServer.js"
+		"start-file-server": "start node tool/FileServer.js"
 	},
 	"repository": {
 		"type": "git",
