@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objecttypes>
+ <objecttype name="coin" color="#ffff00">
+  <property name="prop1" type="string" default="aaa"/>
+  <property name="prop2" type="string" default="bbb"/>
+  <property name="prop3" type="string" default="ccc"/>
+  <property name="prop4" type="string" default="ab1"/>
+ </objecttype>
+</objecttypes>

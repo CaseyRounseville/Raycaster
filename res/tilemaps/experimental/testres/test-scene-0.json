@@ -1,0 +1,11 @@
+{
+	"version": 0,
+	"skyBox": {
+		"version": 0,
+		"texId": "some-texture-id"
+	},
+	"sceneSrcFile": "test-scene-0-TILED.json",
+	"blockMapFile": "test-scene-0-blockMap.json",
+	"actorsFile": "test-scene-0-actors.json",
+	"entrancesFile": "test-scene-0-entrances.json"
+}
