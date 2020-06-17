@@ -39,7 +39,7 @@ DefaultResourceBackend.prototype.loadResource = function(id) {
 	// scenes
 	resObj.scenes.forEach((sceneSrcObj) => {
 		const sceneId = sceneSrcObj.id;
-		const protoScene = JSON.parse(sceneSrcObj.data);
+		const protoScene = sceneSrcObj.data;
 		regProtoScene(sceneId, protoScene);
 		res.sceneIds.push(sceneId);
 	});
