@@ -27,13 +27,13 @@ BlockMap.prototype.wire = function() {
 	console.log("wiring block map");
 	let globalRenderer = globalCtxt.renderer;
 	globalRenderer.registerBlockMap(this);
-	globalRenderer.registerOverlay(this.renderer);
+	//globalRenderer.registerOverlay(this.renderer);
 };
 
 BlockMap.prototype.unwire = function() {
 	let globalRenderer = globalCtxt.renderer;
 	globalRenderer.registerBlockMap(undefined);
-	globalRenderer.unregisterOverlay(this.renderer);
+	//globalRenderer.unregisterOverlay(this.renderer);
 };
 
 /*
