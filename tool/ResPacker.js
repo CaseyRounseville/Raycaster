@@ -1,4 +1,5 @@
 const fs = require("fs");
+const path = require("path");
 
 /*
 const packRes = (resIndex, srcDirName, DestDirName, fileNames) => {
@@ -48,7 +49,7 @@ const packTextures = (resIndex, srcDirName, outObj) => {
 		outObj.textures.push({
 			id: texObj.id,
 			data: "data:image/png;base64," + fs.readFileSync(srcDirName +
-					"\\" + texObj.file).toString("base64")
+					path.sep + texObj.file).toString("base64")
 		});
 	});
 };
@@ -67,10 +68,32 @@ const packTextures = (resIndex, srcDirName, outObj) => {
 const packScenes = (resIndex, srcDirName, outObj) => {
 	outObj.scenes = [];
 	resIndex.scenes.forEach((sceneObj) => {
-		outObj.scenes.push({
+		// read in the initial data from the scene file;
+		// this data contains the file names we need in order to obtain the
+		// actual data for the scene
+		const packedScene = {
 			id: sceneObj.id,
-			data: fs.readFileSync(srcDirName + "\\" + sceneObj.file, "utf8")
-		});
+			data: JSON.parse(fs.readFileSync(srcDirName + path.sep +
+					sceneObj.file, "utf8"))
+		};
+
+		// load the block map, actors, and entrances data from the appropriate
+		// files, and pack them into the scene data
+		packedScene.data.blockMap = JSON.parse(fs.readFileSync(srcDirName +
+				path.sep + packedScene.data.blockMapFile));
+		packedScene.data.actors = JSON.parse(fs.readFileSync(srcDirName +
+				path.sep + packedScene.data.actorsFile));
+		packedScene.data.entrances = JSON.parse(fs.readFileSync(srcDirName +
+				path.sep + packedScene.data.entrancesFile));
+
+		// we don't need those file names in the scene object anymore, so we
+		// can safely remove them so they don't appear in the packed scene
+		delete packedScene.data.sceneSrcFile;
+		delete packedScene.data.blockMapFile;
+		delete packedScene.data.actorsFile;
+		delete packedScene.data.entrancesFile;
+
+		outObj.scenes.push(packedScene);
 	});
 };
 
@@ -79,12 +102,16 @@ const packScenes = (resIndex, srcDirName, outObj) => {
 // argv[1] -- The path to this script file.
 // argv[2] -- The path of the source directory.
 // argv[3] -- The path of the destination directory.
-let srcDirName = process.argv[2];
-let destDirName = process.argv[3];
+
+// we will go ahead and normalize the paths, in order to avoid issues related
+// to forward slash vs back slash for separators
+let srcDirName = path.normalize(process.argv[2]);
+let destDirName = path.normalize(process.argv[3]);
 
 // read the index file in the source directory
 let resIndex = {};
-resIndex = JSON.parse(fs.readFileSync(srcDirName + "\\" + "index.json", "utf8"));
+resIndex = JSON.parse(fs.readFileSync(srcDirName + path.sep + "index.json",
+		"utf8"));
 //console.log("tex: " + resIndex.textures);
 //console.log(JSON.stringify(resIndex));
 
@@ -103,4 +130,6 @@ packScenes(resIndex, srcDirName, outObj);
 //packRes(fileNames);
 
 // write the output object to the pack file
-fs.writeFileSync(destDirName + "\\" + srcDirName.substring(srcDirName.lastIndexOf("\\") + 1) + ".json", JSON.stringify(outObj), "utf8");
+fs.writeFileSync(destDirName + path.sep +
+		srcDirName.substring(srcDirName.lastIndexOf(path.sep) + 1) + ".json",
+		JSON.stringify(outObj), "utf8");
