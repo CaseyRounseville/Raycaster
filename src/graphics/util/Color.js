@@ -1,7 +1,7 @@
 export const WHITE		= 0xFFFFFFFF,
              BLACK		= 0x000000FF,
              PINK		= 0xFF00FFFF,
-             YELLOW	    = 0x00FFFFFF,
+             YELLOW	    = 0xFFFF00FF,
              RED		= 0xFF0000FF,
              GREEN	    = 0x00FF00FF,
              BLUE		= 0x0000FFFF,
