@@ -17,8 +17,9 @@ export const loadBlockMap = (obj) => {
 	const graphicsBackend = globalCtxt.graphicsBackend;
 	const texSheet = new TextureSheet(graphicsBackend.getTexture(obj.texId),
 			32, 32, 4, 4, 0, 0);
+	const miniMapTex = graphicsBackend.getTexture(obj.miniMapTexId);
 
 	return new BlockMap(obj.width, obj.height, texSheet, obj.northData,
 		obj.southData, obj.eastData, obj.westData, obj.flatData,
-		obj.heightData, obj.collData);
+		obj.heightData, obj.collData, miniMapTex);
 };

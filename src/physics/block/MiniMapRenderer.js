@@ -11,6 +11,10 @@ import { globalCtxt } from "../../main/GlobalContext";
 const BLOCK_WIDTH = 2;
 const BLOCK_HEIGHT = 2;
 
+// offset of the minimap from the edges of the screen
+const PAD_HORIZ = 10;
+const PAD_VERT = 10;
+
 export function MiniMapRenderer(blockMap) {
 	this.blockMap = blockMap;
 };
@@ -18,40 +22,28 @@ export function MiniMapRenderer(blockMap) {
 MiniMapRenderer.prototype.render = function(backend) {
     // save some typing
     const blockMap = this.blockMap;
+	const miniMapWidth = blockMap.getMinMapTex().getWidth();
+	const miniMapHeight = blockMap.getMinMapTex().getHeight();
 
     // determine the screen coordinates, in pixels, of the top-left corner of
     // the minimap
-    const topLeftX = INTERNAL_WIDTH - BLOCK_WIDTH * blockMap.width;
-    const topLeftY = INTERNAL_HEIGHT - BLOCK_HEIGHT * blockMap.height;
+    const topLeftX = INTERNAL_WIDTH - PAD_HORIZ - miniMapWidth * BLOCK_WIDTH;
+    const topLeftY = INTERNAL_HEIGHT - PAD_VERT - miniMapHeight * BLOCK_HEIGHT;
 
-    // draw the blockmap in 2d, like an over-head view;
-    // use white for clear(0) and black for obstacles
-	for (let row = 0; row < blockMap.height; row++) {
-        for (let col = 0; col < blockMap.width; col++) {
-            // get the collision value for the current cell
-            let collVal = blockMap.getCollData(row, col);
-
-            // render the appropriately colored rectangle at the correct
-            // position
-            let xpix = topLeftX + BLOCK_WIDTH * col;
-            let ypix = topLeftY + BLOCK_HEIGHT * row;
-            let color = undefined;
-            if (collVal == 0) {
-                color = 0x008C6A7F;
-            } else {
-                color = 0x00EBCCBF;
-            }
-            backend.setFillColor(color);
-            backend.fillRect(xpix, ypix, BLOCK_WIDTH, BLOCK_HEIGHT);
-        }
-    }
+	// draw the minimap texture in the bottom right corner of the screen
+	backend.renderTexture(blockMap.miniMapTex.getId(), topLeftX, topLeftY,
+			miniMapWidth * BLOCK_WIDTH, miniMapHeight * BLOCK_HEIGHT, 0, 0,
+			miniMapWidth, miniMapHeight);
 
     // draw the player, if there is one
     const player = globalCtxt.player;
     if (player) {
         backend.setFillColor(Color.RED);
-        backend.fillRect(topLeftX + player.pos.x * BLOCK_WIDTH, topLeftY +
-                player.pos.y * BLOCK_HEIGHT, BLOCK_WIDTH, BLOCK_HEIGHT);
+		backend.fillRect(topLeftX + Math.round(player.pos.x * BLOCK_WIDTH) -
+				Math.round(0.5 * BLOCK_WIDTH),
+				topLeftY + Math.round(player.pos.y * BLOCK_HEIGHT) -
+				Math.round(0.5 * BLOCK_HEIGHT),
+				BLOCK_HEIGHT, BLOCK_WIDTH, BLOCK_HEIGHT);
     }
 
     // draw the actors of the current scene(besides the player)
@@ -59,8 +51,9 @@ MiniMapRenderer.prototype.render = function(backend) {
         backend.setFillColor(Color.YELLOW);
         const actors = globalCtxt.scene.actors;
         actors.forEach((actor) => {
-            backend.fillRect(topLeftX + actor.pos.x * BLOCK_WIDTH, topLeftY +
-                    actor.pos.y * BLOCK_HEIGHT, BLOCK_WIDTH, BLOCK_HEIGHT);
+			backend.fillRect(topLeftX + Math.round(actor.pos.x - 0.5) *
+					BLOCK_WIDTH, topLeftY + Math.round(actor.pos.y - 0.5) *
+					BLOCK_HEIGHT, 1, 1);
         });
     }
 };

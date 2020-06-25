@@ -1,8 +1,10 @@
 const fs = require("fs");
 const canvas = require("canvas");
 
-const FILL_CLEAR = "black";
-const FILL_SOLID = "blue";
+// note that the values for rgb are 0 to 255 inclusive, but the value for
+// opacity is 0 to 1 inclusive
+const FILL_CLEAR = "rgba(47, 115, 90, 0.5)";
+const FILL_SOLID = "rgba(46, 198, 172, 0.75)";
 
 /**
  * Initialize a minimal in-memory representation of a map, to base a minimap

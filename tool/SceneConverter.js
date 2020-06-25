@@ -1,5 +1,6 @@
 const fs = require("fs");
 const childProcess = require("child_process");
+const path = require("path");
 
 /**
  * Initialize an index scene entry. This is the kind of objects returned by the
@@ -29,7 +30,7 @@ function IndexSceneEntry(id, file) {
  * The index object.
  */
 function loadIndex(resFolderPath) {
-	return JSON.parse(fs.readFileSync(resFolderPath + "\\" + "index.json",
+	return JSON.parse(fs.readFileSync(resFolderPath + path.sep + "index.json",
 			"utf8"));
 }
 
@@ -44,7 +45,7 @@ function loadIndex(resFolderPath) {
  * The scene object.
  */
 function loadScene(resFolderPath, scenePath) {
-	return JSON.parse(fs.readFileSync(resFolderPath + "\\" + scenePath,
+	return JSON.parse(fs.readFileSync(resFolderPath + path.sep + scenePath,
 			"utf8"));
 }
 
@@ -75,25 +76,38 @@ function extractSceneEntries(indexObj) {
  *
  * Parameters:
  * resFolderPath -- The path to the resource folder containing the scene.
- * sceneEntry -- The entry object from the resource index.
+ * sceneObj -- The scene object to convert, which is most likely loaded from a
+ * scene json file.
  *
  * Returns:
  * Nothing.
  */
-function convertScene(resFolderPath, sceneEntry) {
-	// load the scene file, and determine where we will save the block map,
-	// actors list, and entrances list after they are extracted and converted
-	const sceneObj = loadScene(resFolderPath, sceneEntry.file);
-	const sceneSrcPath = resFolderPath + "\\" + sceneObj.sceneSrcFile;
-	const blockMapPath = resFolderPath + "\\" + sceneObj.blockMapFile;
-	const actorsPath = resFolderPath + "\\" + sceneObj.actorsFile;
-	const entrancesPath = resFolderPath + "\\" + sceneObj.entrancesFile;
+function convertScene(resFolderPath, sceneObj) {
+	// determine where we will save the block map, actors list, and entrances
+	// list after they are extracted and converted
+	const sceneSrcPath = resFolderPath + path.sep + sceneObj.sceneSrcFile;
+	const blockMapPath = resFolderPath + path.sep + sceneObj.blockMapFile;
+	const actorsPath = resFolderPath + path.sep + sceneObj.actorsFile;
+	const entrancesPath = resFolderPath + path.sep + sceneObj.entrancesFile;
 
 	// spawn a child nodejs process to convert the scene;
 	// note that this is a separate process, and the current(parent) process
-	// will not wait for it to complete
-	childProcess.fork("./tool/TiledConverter.js", [sceneSrcPath, blockMapPath,
-			actorsPath, entrancesPath]);
+	// will wait for it to complete
+	childProcess.spawnSync("node", ["./tool/TiledConverter.js", sceneSrcPath,
+			blockMapPath, actorsPath, entrancesPath]);
+}
+
+function genMiniMap(resFolderPath, sceneObj) {
+	// determine where we will find the block map to base the minimap on, and
+	// where we will save the minimap
+	const blockMapPath = resFolderPath + path.sep + sceneObj.blockMapFile;
+	const miniMapPath = resFolderPath + path.sep + sceneObj.miniMapFile;
+
+	// spawn a child nodejs process to generate the minimap;
+	// note that this is a separate process, and the current(parent) process
+	// will wait for it to complete
+	childProcess.spawnSync("node", ["./tool/MiniMapGenerator.js", blockMapPath,
+			miniMapPath]);
 }
 
 /**
@@ -117,9 +131,16 @@ function main(resFolderPath) {
 	// extract the scene entries from the index
 	const sceneEntries = extractSceneEntries(indexObj);
 
-	// convert each scene
+	// convert each scene and generate minimaps
 	sceneEntries.forEach(sceneEntry => {
-		convertScene(resFolderPath, sceneEntry);
+		// load the scene file
+		const sceneObj = loadScene(resFolderPath, sceneEntry.file);
+
+		// convert the scene
+		convertScene(resFolderPath, sceneObj);
+
+		// generate the minimap
+		genMiniMap(resFolderPath, sceneObj);
 	});
 }
 

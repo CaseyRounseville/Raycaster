@@ -12,5 +12,7 @@
 
   "actorsFile": "test-scene-0-actors.json",
 
-  "entrancesFile": "test-scene-0-entrances.json" 
+  "entrancesFile": "test-scene-0-entrances.json",
+
+  "miniMapFile": "scene-0-minimap.png"
 }

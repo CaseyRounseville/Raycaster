@@ -31,17 +31,18 @@ function extractSkyBox(tiledObj) {
  */
 function extractBlockMap(tiledObj) {
 	const blockMap = {
-		version:	0,
-		width:		tiledObj.width,
-		height:		tiledObj.height,
-		texId:		undefined,
-		northData:	undefined,
-		southData:	undefined,
-		eastData:	undefined,
-		westData:	undefined,
-		flatData:	undefined,
-		heightData:	undefined,
-		collData:	undefined
+		version:		0,
+		width:			tiledObj.width,
+		height:			tiledObj.height,
+		texId:			undefined,
+		northData:		undefined,
+		southData:		undefined,
+		eastData:		undefined,
+		westData:		undefined,
+		flatData:		undefined,
+		heightData:		undefined,
+		collData:		undefined,
+		miniMapTexId:	undefined
 	};
 
 	// we need to loop over each custom property of the map, and pull out the
@@ -49,6 +50,14 @@ function extractBlockMap(tiledObj) {
 	tiledObj.properties.forEach(propertyObj => {
 		if (propertyObj.name == "texId") {
 			blockMap.texId = propertyObj.value;
+		}
+	});
+
+	// we need to loop over each custom property of the map, and pull out the
+	// miniMapTexId property
+	tiledObj.properties.forEach(propertyObj => {
+		if (propertyObj.name == "miniMapTexId") {
+			blockMap.miniMapTexId = propertyObj.value;
 		}
 	});
 

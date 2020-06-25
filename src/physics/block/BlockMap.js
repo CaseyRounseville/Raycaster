@@ -9,7 +9,7 @@ import { Vertex } from "../../graphics/mesh/Vertex";
 import { MiniMapRenderer } from "./MiniMapRenderer";
 
 export function BlockMap(width, height, texSheet, northData, southData,
-		eastData, westData, flatData, heightData, collData) {
+		eastData, westData, flatData, heightData, collData, miniMapTex) {
 	this.width = width;
 	this.height = height;
 	this.texSheet = texSheet;
@@ -20,6 +20,7 @@ export function BlockMap(width, height, texSheet, northData, southData,
 	this.flatData = flatData;
 	this.heightData = heightData;
 	this.collData = collData;
+	this.miniMapTex = miniMapTex;
 	this.renderer = new MiniMapRenderer(this);
 }
 
@@ -27,13 +28,13 @@ BlockMap.prototype.wire = function() {
 	console.log("wiring block map");
 	let globalRenderer = globalCtxt.renderer;
 	globalRenderer.registerBlockMap(this);
-	//globalRenderer.registerOverlay(this.renderer);
+	globalRenderer.registerOverlay(this.renderer);
 };
 
 BlockMap.prototype.unwire = function() {
 	let globalRenderer = globalCtxt.renderer;
 	globalRenderer.registerBlockMap(undefined);
-	//globalRenderer.unregisterOverlay(this.renderer);
+	globalRenderer.unregisterOverlay(this.renderer);
 };
 
 /*
@@ -163,4 +164,8 @@ BlockMap.prototype.getHeightData = function(row, col) {
 
 BlockMap.prototype.getCollData = function(row, col) {
   return this.collData[row * this.width + col];
+};
+
+BlockMap.prototype.getMinMapTex = function() {
+  return this.miniMapTex;
 };

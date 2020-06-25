@@ -3,7 +3,8 @@
 		{ "id": "scene-0-walls", "file": "walls.png" },
 		{ "id": "scene-0-walls-2", "file": "walls-2.png" },
 		{ "id": "skybox-0", "file": "skybox-0.png" },
-		{ "id": "skybox-1", "file": "skybox-1.png" }
+		{ "id": "skybox-1", "file": "skybox-1.png" },
+		{ "id": "scene-0-minimap", "file": "scene-0-minimap.png" }
 	],
 	"scenes": [
 		{ "id": "scene-0", "file": "test-scene-0.json" }
