@@ -9,7 +9,7 @@
 		"babel-loader": "^7.1.5",
 		"babel-preset-env": "^1.7.0",
 		"webpack": "^4.10.0",
-		"webpack-cli": "^2.1.4"
+		"webpack-cli": "^5.0.1"
 	},
 	"scripts": {
 		"start": "webpack --display-modules && start index.html",
